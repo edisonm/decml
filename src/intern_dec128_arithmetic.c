@@ -140,24 +140,18 @@ void div_bits_ddec128_dec128(
     // operating on 128-bit chunks. `current_rem` serves as a 128-bit accumulator
     // that incorporates bits from `n_lo` sequentially.
     for (int i = 127; i >= 0; --i) {
-        // Shift the `current_rem` accumulator left by 1 bit.
-        // This effectively makes space for the next bit from `n_lo`.
-        // The most significant bit of `current_rem` might "overflow" temporarily,
-        // but `__uint128_t` arithmetic handles this correctly internally for comparison/subtraction.
-        if (current_rem >= (d - current_rem)) {
-            current_rem = (current_rem - (d - current_rem)) + ((n_lo >> i) & 1);
+        // Shift the `current_rem` accumulator left by 1 bit, but be aware of
+        // overflow (see if branches).  This effectively makes space for the
+        // next bit from `n_lo`.  The most significant bit of `current_rem`
+        // might "overflow" temporarily, but `__uint128_t` arithmetic handles
+        // this correctly internally for comparison/subtraction.
+        __uint128_t tmp = current_rem + ((n_lo >> i) & 1);
+        __uint128_t dif = d - current_rem;
+        if (tmp >= dif) {
+            current_rem = tmp - dif;
             q_lo |= ((__uint128_t)1 << i);
         } else {
-            current_rem = (current_rem << 1) | ((n_lo >> i) & 1);
-
-            // If the current accumulated remainder (with the new bit) is greater than or
-            // equal to the denominator, perform a subtraction.
-            // This is equivalent to finding the next quotient bit.
-            if (current_rem >= d) {
-                current_rem -= d;
-                // Set the corresponding bit in the low part of the quotient.
-                q_lo |= ((__uint128_t)1 << i);
-            }
+            current_rem += tmp;
         }
     }
 
