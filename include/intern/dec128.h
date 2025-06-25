@@ -45,6 +45,8 @@ extern const char dec_sign[];
 extern const intern_dec128_t intern_dec128_zero, intern_dec128_one, intern_dec128_two,
     intern_dec128_pi, intern_dec128_nan, intern_dec128_inf, intern_dec128_neginf;
 
+extern const intern_dec128_t pow10m1_dec128[40][9];
+
 /// Inlines
 static inline void intern_dec128_set_nan(intern_dec128_t *x) { *x = intern_dec128_nan; }
 static inline void intern_dec128_set_inf(intern_dec128_t *x, int sign) {
@@ -76,6 +78,7 @@ __INTF_INTERN_DEC(asin,  dec128, r, a);
 __INTF_INTERN_DEC(acos,  dec128, r, a);
 __INTF_INTERN_DEC(sin,   dec128, r, a);
 __INTF_INTERN_DEC(cos,   dec128, r, a);
+__INTF_INTERN_DEC(exp10m1, dec128, r, a);
 
 int intern_dec128_set_str(intern_dec128_t *out, const char *str);
 int intern_dec128_get_str(const intern_dec128_t *d, char *buf, size_t bufsize);

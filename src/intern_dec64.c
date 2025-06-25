@@ -9,9 +9,11 @@
 #include "intern/impl_dec_asin.h"
 #include "intern/impl_dec_acos.h"
 #include "intern/impl_dec_log10.h"
+#include "intern/impl_dec_exp10m1.h"
 
 __IMPL_CONST_INTERN_DEC(dec64, pi,      0, 3141592653589793238ULL, -18, DEC_NORMAL);
 __IMPL_CONST_INTERN_DEC(dec64, log10_2, 0, 3321928094887362348ULL, -18, DEC_NORMAL);
+__IMPL_CONST_INTERN_DEC(dec64, log_10,  0, 2302585092994045684ULL, -18, DEC_NORMAL);
 
 void print_uint64(uint64_t n) {
     printf("%" PRIu64, n);
@@ -29,3 +31,6 @@ __IMPL_INTERN_DEC_COS(dec64)
 __IMPL_INTERN_DEC_ASIN(dec64)
 __IMPL_INTERN_DEC_ACOS(dec64)
 __IMPL_INTERN_DEC_LOG10(dec64)
+__INTF_INTERN_DEC_EXP10M1_REC(dec64);
+__IMPL_INTERN_DEC_EXP10M1_REC(dec64)
+__IMPL_INTERN_DEC_EXP10M1(dec64)

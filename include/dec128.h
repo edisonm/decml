@@ -190,6 +190,7 @@ __INTF_DEC_FUNC1(acos,  dec128);
 __INTF_DEC_FUNC1(sin,  dec128);
 __INTF_DEC_FUNC1(cos,  dec128);
 __INTF_DEC_FUNC1(abs,  dec128);
+__INTF_DEC_FUNC1(exp10m1, dec128);
 
 /* String conversion */
 int dec128_set_str(dec128_t *result, const char *str);

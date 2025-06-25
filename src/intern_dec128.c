@@ -9,6 +9,7 @@
 #include "intern/impl_dec_asin.h"
 #include "intern/impl_dec_acos.h"
 #include "intern/impl_dec_log10.h"
+#include "intern/impl_dec_exp10m1.h"
 
 // 31415926535897932384626433832795028842e-37 (38 digits)
 __IMPL_CONST_INTERN_DEC(dec128, pi, 0, 
@@ -19,6 +20,11 @@ __IMPL_CONST_INTERN_DEC(dec128, pi, 0,
 __IMPL_CONST_INTERN_DEC(dec128, log10_2, 0, 
                         ((__uint128_t)3321928094887362347ULL * 10000000000000000000ULL)
                         + 8703194294893901759ULL,
+                        -37, DEC_NORMAL);
+
+__IMPL_CONST_INTERN_DEC(dec128, log_10, 0,
+                        ((__uint128_t)2302585092994045684ULL * 10000000000000000000ULL)
+                        +  179914546843642076ULL,
                         -37, DEC_NORMAL);
 
 void print_uint128(__uint128_t n) {
@@ -42,3 +48,6 @@ __IMPL_INTERN_DEC_COS(dec128)
 __IMPL_INTERN_DEC_ASIN(dec128)
 __IMPL_INTERN_DEC_ACOS(dec128)
 __IMPL_INTERN_DEC_LOG10(dec128)
+__INTF_INTERN_DEC_EXP10M1_REC(dec128);
+__IMPL_INTERN_DEC_EXP10M1_REC(dec128)
+__IMPL_INTERN_DEC_EXP10M1(dec128)

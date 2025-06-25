@@ -34,18 +34,18 @@
 #define dec64_SUP_COEFF       10000000000000000ULL  // 10^16
 #define dec64_MAX_COEFF       (dec64_SUP_COEFF-1)   // 10^16 - 1
 
-#define dec64_EXP_BIAS       398
-#define dec64_MAX_EXP        369
-#define dec64_MIN_EXP       -398
+#define dec64_EXP_BIAS        398
+#define dec64_MAX_EXP         369
+#define dec64_MIN_EXP        -398
 
-#define dec64_COMB_MASK      0x1E00000000000000ULL  // Bits 62-58
-#define dec64_SIGN_MASK      0x8000000000000000ULL
-#define dec64_EXP_CONT_MASK  0x03FC000000000000ULL
+#define dec64_COMB_MASK       0x1E00000000000000ULL  // Bits 62-58
+#define dec64_SIGN_MASK       0x8000000000000000ULL
+#define dec64_EXP_CONT_MASK   0x03FC000000000000ULL
 #define dec64_COEFF_CONT_MASK 0x001FFFFFFFFFFFFFULL
 
 // Combination field patterns for special values (bits 62-58)
-#define dec64_COMB_NAN            ((uint64_t)0x7800000000000000ULL) // 11110xxxxx...
-#define dec64_COMB_INF            ((uint64_t)0x7C00000000000000ULL) // 11111xxxxx...
+#define dec64_COMB_NAN        ((uint64_t)0x7800000000000000ULL) // 11110xxxxx...
+#define dec64_COMB_INF        ((uint64_t)0x7C00000000000000ULL) // 11111xxxxx...
 
 // Special encodings (when exponent == 0x3FF)
 
@@ -229,6 +229,7 @@ __INTF_DEC_FUNC1(acos,  dec64);
 __INTF_DEC_FUNC1(sin,  dec64);
 __INTF_DEC_FUNC1(cos,  dec64);
 __INTF_DEC_FUNC1(abs,  dec64);
+__INTF_DEC_FUNC1(exp10m1, dec64);
 
 /* String conversion */
 int dec64_set_str(dec64_t *result, const char *str);
@@ -237,5 +238,7 @@ int dec64_get_str(const dec64_t *x, char *buf, size_t bufsize);
 void dec64_to_internal(const dec64_t *d, intern_dec64_t *out);
 void internal_to_dec64(const intern_dec64_t *in, dec64_t *d);
 void normalize_intern_dec64(intern_dec64_t *v);
+
+extern const intern_dec64_t pow10m1_dec64[20][9];
 
 #endif /* DEC64_H */

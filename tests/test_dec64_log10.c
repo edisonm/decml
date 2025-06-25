@@ -5,6 +5,24 @@
 
 int main(void) {
     int failed = 0;
+    printf("testing exp10m1 dec64\n");
+    failed += test_dec64_1(dec64_exp10m1, "1", "9", 0);
+    failed += test_dec64_1(dec64_exp10m1, "10", "9999999999", 0);
+    failed += test_dec64_1(dec64_exp10m1, "-10", "-0.9999999999", 0);
+    failed += test_dec64_1(dec64_exp10m1, "100", "1e100", 0);
+    failed += test_dec64_1(dec64_exp10m1, "-20", "-1", 0);
+    failed += test_dec64_1(dec64_exp10m1, "-100", "-1", 0);
+    failed += test_dec64_1(dec64_exp10m1, "-100e100", "-1", 0);
+    failed += test_dec64_1(dec64_exp10m1, "1e-10", "2.302585093259141e-10", 0);
+    failed += test_dec64_1(dec64_exp10m1, "3.333333333333333e-15", "7.675283643313514e-15", 0);
+    failed += test_dec64_1(dec64_exp10m1, "1e-20", "2.302585092994046e-20", 0);
+    failed += test_dec64_1(dec64_exp10m1, "1e-30", "2.302585092994046e-30", 0);
+    failed += test_dec64_1(dec64_exp10m1, "0.95", "7.912509381337455", 0);
+    failed += test_dec64_1(dec64_exp10m1, "0.10", "0.2589254117941672", 0);
+    failed += test_dec64_1(dec64_exp10m1, "0.15", "0.4125375446227543", 0);
+    failed += test_dec64_1(dec64_exp10m1, "-0.15", "-0.2920542156158621", 0);
+    failed += test_dec64_1(dec64_exp10m1, "0.015", "0.03514216667934382", 0);
+    failed += test_dec64_1(dec64_exp10m1, "0.3333333333333333", "1.154434690031884", 0);
     printf("testing log10 dec64\n");
     failed += test_dec64_1(dec64_log10, "2",    "0.3010299956639812", 0); // approximate
     failed += test_dec64_1(dec64_log10, "0.5", "-0.3010299956639812", 0); // approximate

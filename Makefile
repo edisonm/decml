@@ -3,8 +3,9 @@ CC = gcc
 CFLAGS = -I./include -Wall -Wextra -O2
 LIBS = bin/libdec.a
 
-SRCS =  intern_dec.c \
+SRCS =  intern_dec.c gen_pow10m1_dec64_table.c \
 	dec64.c  intern_dec64_str.c  intern_dec64_arithmetic.c  intern_dec64.c \
+	gen_pow10m1_dec128_table.c \
 	dec128.c intern_dec128_str.c intern_dec128_arithmetic.c intern_dec128.c
 
 OBJS = $(SRCS:.c=.o)
@@ -27,6 +28,12 @@ all: bin/libdec.a
 
 bin/libdec.a: $(addprefix bin/,$(OBJS))
 	ar rcs $@ $^
+
+bin/%.c: %.sh
+	./$< > $@
+
+bin/gen_%.o: bin/gen_%.c include/intern/dec64.h
+	$(CC) $(CFLAGS) -c $< -o $@
 
 bin/%.o: src/%.c include/dec64.h include/intern/dec64.h
 	$(CC) $(CFLAGS) -c $< -o $@

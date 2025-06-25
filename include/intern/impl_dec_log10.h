@@ -1,5 +1,6 @@
 #define __IMPL_INTERN_DEC_LOG10(__dec)                                  \
-    void intern_##__dec##_log10(intern_##__dec##_t *result, const intern_##__dec##_t *x) { \
+    void intern_##__dec##_log10(intern_##__dec##_t *result,             \
+                                const intern_##__dec##_t *x) {          \
         if (x->sign) {                                                  \
             intern_##__dec##_set_nan(result); /* log(negative) = nan */ \
             return;                                                     \
@@ -26,7 +27,7 @@
                                                                         \
         int coeff_digits = 9; /* 9 = floor(log10(INT64_MAX)) */         \
                                                                         \
-        /* now we calculate the log10 in two iteractions, just using powi and then */ \
+        /* now we calculate the log10 in few iteractions, just using powi and then */ \
         /* we move the exponent to the coefficient in a clever way: */  \
         bits_##__dec##_t r_coeff;                                       \
         int sign;                                                       \
