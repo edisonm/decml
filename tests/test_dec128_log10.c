@@ -5,7 +5,7 @@
 
 int main(void) {
     int failed = 0;
-    printf("testing exp10m1 dec128\n");
+    printf("dec128: Testing exp10m1\n");
     failed += test_dec128_1(dec128_exp10m1, "1", "9", 0);
     failed += test_dec128_1(dec128_exp10m1, "10", "9999999999", 0);
     failed += test_dec128_1(dec128_exp10m1, "-10", "-0.9999999999", 0);
@@ -23,7 +23,7 @@ int main(void) {
     failed += test_dec128_1(dec128_exp10m1, "-0.15", "-0.2920542156158620891977850578106873", 0);
     failed += test_dec128_1(dec128_exp10m1, "0.015", "0.03514216667934381727562347345431827", 0);
     failed += test_dec128_1(dec128_exp10m1, "0.333333333333333333333333333333333", "1.154434690031883721759293566519349", 0);
-    printf("testing log10 dec128\n");
+    printf("dec128: Testing log10\n");
     failed += test_dec128_1(dec128_log10, "2",    "0.301029995663981195213738894724493", 0); // approximate
     failed += test_dec128_1(dec128_log10, "0.5", "-0.301029995663981195213738894724493", 0); // approximate
     failed += test_dec128_1(dec128_log10, "20",   "1.301029995663981195213738894724493", 0); // approximate

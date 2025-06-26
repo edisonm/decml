@@ -46,7 +46,7 @@ int main(void) {
     int passed = 0;
     int total = sizeof(tests) / sizeof(tests[0]);
 
-    printf("testing string conversions dec64\n");
+    printf("dec64: Testing string conversions\n");
 
     for (int i = 0; i < total; ++i) {
         dec64_set_str(&x, tests[i].input);

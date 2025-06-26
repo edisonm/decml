@@ -5,7 +5,7 @@
 
 int main() {
     int failed = 0;
-    printf("testing arithmetic intern_dec128\n");
+    printf("intern_dec128: Testing arithmetic\n");
     /*
     intern_dec128_t
         a = {0, 2, 0, DEC_NORMAL},
@@ -18,7 +18,7 @@ int main() {
     failed += test_i_dec128_2(intern_dec128_div, "40404040404040404040404040404040404040e-38", "95918783797571676359555147433935312724e-38",
                               "0.42123178385278161897670460589299010742", 0);
     failed += test_i_dec128_2(intern_dec128_div, "2e0", "-249999999999999999999999999999999475000e-22", "-8.0000000000000000000000000000000168e-17", 0); // subtraction 1 - 0 = 0
-    printf("testing arithmetic dec128\n");
+    printf("dec128: Testing arithmetic\n");
     failed += test_dec128_2(dec128_add, "1", "0", "1", 0); // subtraction 1 - 0 = 0
     failed += test_dec128_2(dec128_add, "123.45", "67.89", "191.34", 0); // addition 123.45 + 67.89 = 191.34
     failed += test_dec128_2(dec128_add, "0.09590083957724163", "0.09590083957724163", "0.19180167915448326", 0);

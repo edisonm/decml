@@ -5,7 +5,7 @@
 
 int main(void) {
     int failed = 0;
-    printf("testing atan dec128\n");
+    printf("dec128: Testing atan\n");
     failed += test_dec128_1(dec128_atan, "0",        "0", 0); // a(0.1)
     failed += test_dec128_1(dec128_atan, "0.1",      "0.09966865249116202737844611987802059", 0); // a(0.1)
     failed += test_dec128_1(dec128_atan, "0.01",     "0.009999666686665238206340116209279549", 0);
@@ -22,7 +22,7 @@ int main(void) {
     failed += test_dec128_1(dec128_atan, "1e100",              "1.570796326794896619231321691639751", 0);
     failed += test_dec128_1(dec128_atan,  "1e-100",  "1e-100", 0);
     failed += test_dec128_1(dec128_atan, "-1e-100", "-1e-100", 0);
-    printf("testing acos dec128\n");
+    printf("dec128: Testing acos\n");
     failed += test_dec128_1(dec128_acos, "1",        "0", 0);
     failed += test_dec128_1(dec128_acos, "0.1",      "1.470628905633336822885798512187058", 0);
     failed += test_dec128_1(dec128_acos, "0.01",     "1.560796160120729506105699414567761", 0);
@@ -35,7 +35,7 @@ int main(void) {
     failed += test_dec128_1(dec128_acos, "-1",       "3.141592653589793238462643383279503", 0);
     failed += test_dec128_1(dec128_acos, "-0.1",     "1.670963747956456415576844871092445", 0);
     failed += test_dec128_1(dec128_acos, "2",        "nan", 0);
-    printf("testing asin dec128\n");
+    printf("dec128: Testing asin\n");
     failed += test_dec128_1(dec128_asin, "1",        "1.570796326794896619231321691639751", 0);
     failed += test_dec128_1(dec128_asin, "0.1",      "0.1001674211615597963455231794526933", 0);
     failed += test_dec128_1(dec128_asin, "0.01",     "0.01000016667416711312562227707199038", 0);

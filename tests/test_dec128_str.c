@@ -49,7 +49,7 @@ int main(void) {
     int passed = 0;
     int total = sizeof(tests) / sizeof(tests[0]);
 
-    printf("Decimal128: testing string conversions\n");
+    printf("dec128: Testing string conversions\n");
 
     for (int i = 0; i < total; ++i) {
         dec128_set_str(&x, tests[i].input);

@@ -5,7 +5,7 @@
 int main(void) {
     int failed = 0;
     
-    printf("testing compare dec64\n");
+    printf("dec64: Testing compare\n");
 
     // EQUALITY
     failed += test_dec64_i2(dec64_equal, "1",   "1", 1, 0);

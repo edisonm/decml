@@ -5,7 +5,7 @@
 
 int main() {
     int failed = 0;
-    printf("testing arithmetic dec64\n");
+    printf("dec64: Testing arithmetic\n");
     failed += test_dec64_2(dec64_add, "1", "0", "1", 0); // subtraction 1 - 0 = 0
     failed += test_dec64_2(dec64_add, "123.45", "67.89", "191.34", 0); // addition 123.45 + 67.89 = 191.34
     failed += test_dec64_2(dec64_add, "0.09590083957724163", "0.09590083957724163", "0.1918016791544833", 0);

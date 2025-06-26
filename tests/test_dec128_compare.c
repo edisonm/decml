@@ -5,7 +5,7 @@
 int main(void) {
     int failed = 0;
     
-    printf("testing compare dec128\n");
+    printf("dec128: Testing compare\n");
 
     // EQUALITY
     failed += test_dec128_i2(dec128_equal, "1",   "1", 1, 0);

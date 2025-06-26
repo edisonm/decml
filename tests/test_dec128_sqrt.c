@@ -5,7 +5,7 @@
 
 int main(void) {
     int failed = 0;
-    printf("testing sqrt dec128\n");
+    printf("dec128: Testing sqrt\n");
     failed += test_dec128_1(dec128_sqrt, "0", "0", 0);
     failed += test_dec128_1(dec128_sqrt, "1", "1", 0);
     failed += test_dec128_1(dec128_sqrt, "4", "2", 0);

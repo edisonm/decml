@@ -6,7 +6,7 @@
 int main(void) {
     int failed = 0;
     
-    printf("testing sqrt dec64\n");
+    printf("dec64: Testing sqrt\n");
     failed += test_dec64_1(dec64_sqrt, "0", "0", 0);
     failed += test_dec64_1(dec64_sqrt, "1", "1", 0);
     failed += test_dec64_1(dec64_sqrt, "4", "2", 0);
