@@ -24,7 +24,7 @@
     }
 
 #define __IMPL_DEC_FUNCi2(__func, __dec)                         \
-    int __dec##_cmp(const __dec##_t *a, const __dec##_t *b)      \
+    int __dec##_##__func(const __dec##_t *a, const __dec##_t *b) \
     {                                                            \
         intern_##__dec##_t ia, ib;                               \
         __dec##_to_internal(a, &ia);                             \

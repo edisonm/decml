@@ -16,6 +16,4 @@ int test_dec128_2i(void (*func_2)(dec128_t *, const dec128_t *, const int),
 int test_i_dec128_2(void (*func_1)(intern_dec128_t *, const intern_dec128_t *, const intern_dec128_t *),
                     const char *input_str_a, const char *input_str_b, const char *expected_str, int expect_error);
 
-void report_failed(int failed);
-
 #endif /* TEST_DEC128_H */

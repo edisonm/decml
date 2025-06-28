@@ -162,24 +162,13 @@ void dec128_powi(dec128_t *result, const dec128_t *a, int exp);
 
 // Comparator API (returns -1,0,1 or 2 as in internal)
 int dec128_cmp(const dec128_t *a, const dec128_t *b);
-static inline int dec128_greater(const dec128_t *a, const dec128_t *b) {
-    int cmp = dec128_cmp(a, b); return cmp != 2 && cmp > 0;
-}
-static inline int dec128_less(const dec128_t *a, const dec128_t *b) {
-    int cmp = dec128_cmp(a, b); return cmp != 2 && cmp < 0;
-}
-static inline int dec128_equal(const dec128_t *a, const dec128_t *b) {
-    int cmp = dec128_cmp(a, b); return cmp != 2 && cmp == 0;
-}
-static inline int dec128_lessequal(const dec128_t *a, const dec128_t *b) {
-    int cmp = dec128_cmp(a, b); return cmp != 2 && cmp <= 0;
-}
-static inline int dec128_greaterequal(const dec128_t *a, const dec128_t *b) {
-    int cmp = dec128_cmp(a, b); return cmp != 2 && cmp >= 0;
-}
-static inline int dec128_is_unordered(const dec128_t *a, const dec128_t *b) {
-    return dec128_cmp(a, b) == 2;
-}
+
+__INTF_DEC_GREATER(dec128)
+__INTF_DEC_LESS(dec128)
+__INTF_DEC_EQUAL(dec128)
+__INTF_DEC_LESSEQUAL(dec128)
+__INTF_DEC_GREATEREQUAL(dec128)
+__INTF_DEC_IS_UNORDERED(dec128)
 
 /* Scientific functions */
 __INTF_DEC_FUNC1(log10, dec128);
@@ -201,5 +190,11 @@ void dec128_to_internal(const dec128_t *d, intern_dec128_t *out);
 void internal_to_dec128(const intern_dec128_t *in, dec128_t *d);
 
 void normalize_intern_dec128(intern_dec128_t *v);
+
+#define __print_dec128(x) ({                                    \
+            printf("%c", dec_sign[dec128_get_sign(&(x))]);      \
+            print_uint128(dec128_get_coefficient(&(x)));        \
+            printf("e%d", dec128_get_exponent(&(x)));           \
+        })
 
 #endif /* DEC128_H */

@@ -43,20 +43,24 @@
             *--p = '0';                                                 \
             dot = true;                                                 \
         } else {                                                        \
-            do {                                                        \
-                digit = (int)(coeff % 10);                              \
-                *--p = '0' + digit;                                     \
-                coeff /= 10;                                            \
-                if (!dot) {                                             \
-                    dot_offset++;                                       \
-                }                                                       \
-                if (!dot && (exponent != 0) &&                          \
-                    (exponent + dot_offset == 0 || coeff < 10)) {       \
-                    *--p = '.';                                         \
-                    dot = true;                                         \
-                    exponent += dot_offset;                             \
-                }                                                       \
-            } while (coeff != 0 || (!dot && exponent + dot_offset < 0)); \
+            if (coeff < 10) {                                           \
+                *--p = '0' + coeff;                                     \
+            } else {                                                    \
+                do {                                                    \
+                    digit = (int)(coeff % 10);                          \
+                    *--p = '0' + digit;                                 \
+                    coeff /= 10;                                        \
+                    if (!dot) {                                         \
+                        dot_offset++;                                   \
+                    }                                                   \
+                    if (!dot && (exponent != 0) &&                      \
+                        (exponent + dot_offset == 0 || coeff < 10)) {   \
+                        *--p = '.';                                     \
+                        dot = true;                                     \
+                        exponent += dot_offset;                         \
+                    }                                                   \
+                } while (coeff != 0 || (!dot && exponent + dot_offset < 0)); \
+            }                                                           \
         }                                                               \
         *e = '\0';                                                      \
         if (sign)                                                       \

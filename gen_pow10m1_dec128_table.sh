@@ -3,7 +3,7 @@
 echo '#include "intern/dec128.h"'
 echo
 echo "const intern_dec128_t pow10m1_dec128[40][9] = {"
-for ((pos=1;pos<=20;pos++)); do
+for ((pos=1;pos<=40;pos++)); do
     echo "    {"
     for ((i=1;i<=9;i++)); do
         value=`echo -e "scale=50+$pos; \

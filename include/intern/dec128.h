@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include "intern/dec.h"
+#include "intf_dec.h"
 
 // Largest integer value with ≤38 decimal digits (max int128_t is >10^38)
 #define I_dec128_MAX_DIGITS 38
@@ -35,7 +36,9 @@ void print_uint128(__uint128_t n);
 
 extern const char dec_sign[];
 
-#define __print_dec128(x) ({                                            \
+#define __print_bits_dec128(x) print_uint128(x)
+
+#define __print_intern_dec128(x) ({                                     \
             printf("%c", dec_sign[x.sign]);                             \
             print_uint128(x.coeff);                                     \
             printf("e%d%s", x.exponent, dec_special[x.special]);        \
@@ -43,7 +46,8 @@ extern const char dec_sign[];
 
 /// Constants (to be defined in a .c file)
 extern const intern_dec128_t intern_dec128_zero, intern_dec128_one, intern_dec128_two,
-    intern_dec128_pi, intern_dec128_nan, intern_dec128_inf, intern_dec128_neginf;
+    intern_dec128_pi, intern_dec128_nan, intern_dec128_inf, intern_dec128_neginf,
+    intern_dec128_epsilon;
 
 extern const intern_dec128_t pow10m1_dec128[40][9];
 
@@ -55,6 +59,10 @@ static inline void intern_dec128_set_inf(intern_dec128_t *x, int sign) {
 static inline bool intern_dec128_is_nan(const intern_dec128_t *x)  { return x->special == DEC_NAN; }
 static inline bool intern_dec128_is_inf(const intern_dec128_t *x)  { return x->special == DEC_INF; }
 static inline bool intern_dec128_is_finite(const intern_dec128_t *x) { return x->special == DEC_NORMAL; }
+
+static inline __uint128_t intern_dec128_get_coefficient(const intern_dec128_t *d) {return d->coeff;}
+static inline int intern_dec128_get_exponent(const intern_dec128_t *d) {return d->exponent;}
+static inline int intern_dec128_get_sign(const intern_dec128_t *d) {return d->sign;}
 
 void normalize_coeff_exp_dec128(__uint128_t *coeff, int *exponent);
 
@@ -68,6 +76,13 @@ void intern_dec128_powi(intern_dec128_t *result, const intern_dec128_t *base, in
 /* Comparisons */
 // Returns: -1 if a < b, 0 if a == b, 1 if a > b, 2 if unordered (NaN involved/invalid)
 int intern_dec128_cmp(const intern_dec128_t *a, const intern_dec128_t *b);
+
+__INTF_DEC_GREATER(intern_dec128)
+__INTF_DEC_LESS(intern_dec128)
+__INTF_DEC_EQUAL(intern_dec128)
+__INTF_DEC_LESSEQUAL(intern_dec128)
+__INTF_DEC_GREATEREQUAL(intern_dec128)
+__INTF_DEC_IS_UNORDERED(intern_dec128)
 
 /* Scientific functions */
 __INTF_INTERN_DEC(sqrt,  dec128, r, a);

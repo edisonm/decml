@@ -8,21 +8,16 @@ SRCS =  intern_dec.c gen_pow10m1_dec64_table.c \
 	gen_pow10m1_dec128_table.c \
 	dec128.c intern_dec128_str.c intern_dec128_arithmetic.c intern_dec128.c
 
+.PRECIOUS: bin/gen_pow10m1_dec128_table.c
+
 OBJS = $(SRCS:.c=.o)
 
 TESTS= \
+	test_dec_func_1 \
+	test_dec_compare \
+	test_dec_arithmetic \
 	test_dec64_str \
-	test_dec64_arithmetic \
-	test_dec64_sqrt \
-	test_dec64_log10 \
-	test_dec64_atan \
-	test_dec64_compare \
-	test_dec128_str \
-	test_dec128_arithmetic \
-	test_dec128_sqrt \
-	test_dec128_log10 \
-	test_dec128_atan \
-	test_dec128_compare
+	test_dec128_str
 
 all: bin/libdec.a
 

@@ -14,6 +14,8 @@ static inline void div_bits_ddec64_dec64(const __uint128_t *numerator,
     if (remainder) *remainder = (uint64_t)(*numerator % denominator);
 }
 
+/* __IMPL_DEC_BITS_DIV_POW10_ROUND(dec64) */
+__IMPL_DEC_BITS_DIV_POW10_ROUND_UP(dec64)
 __IMPL_INTERN_DEC_ADD( dec64)
 __IMPL_INTERN_DEC_SUB( dec64)
 __IMPL_INTERN_DEC_MUL( dec64)

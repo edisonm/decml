@@ -15,11 +15,12 @@
             return;                                                     \
         }                                                               \
         intern_##__dec##_t p;                                           \
-        if (exp < -19) {                                                \
+        if (exp < -I_##__dec##_MAX_DIGITS) {                            \
             /* for small numbers, approximate exp10m1 via:*/            \
             /* exp10m1(x) = exp(x*log(10))-1 ~= x*log(10) */            \
-            intern_##__dec##_exp10m1_rec(coeff/__pow10_##__dec[-exp-19], -19, y); \
-            uint64_t res = coeff % __pow10_##__dec[-exp-19];            \
+            intern_##__dec##_exp10m1_rec(coeff/__pow10_##__dec[-exp-I_##__dec##_MAX_DIGITS], \
+                                         -I_##__dec##_MAX_DIGITS, y);   \
+            uint64_t res = coeff % __pow10_##__dec[-exp-I_##__dec##_MAX_DIGITS]; \
             if (res==0)                                                 \
                 return;                                                 \
             intern_##__dec##_t x = {0, res, exp, DEC_NORMAL};           \

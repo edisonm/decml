@@ -21,7 +21,7 @@
         int diff = 0;                                                   \
         if (*coeff == 0)                                                \
             return;                                                     \
-        while (*coeff < (UINT_##__dec##_MAX/10)/__pow10_##__dec[diff]) { \
+        while (*coeff <= (UINT_##__dec##_MAX/10)/__pow10_##__dec[diff]) { \
             diff++;                                                     \
         }                                                               \
         *coeff *= __pow10_##__dec[diff];                                \

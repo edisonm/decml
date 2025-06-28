@@ -193,42 +193,22 @@ void dec64_powi(dec64_t *result, const dec64_t *a, int exp);
 /* Arithmetic comparators */
 int dec64_cmp(const dec64_t *a, const dec64_t *b);
 
-static inline int dec64_greater(const dec64_t *a, const dec64_t *b) {
-    int cmp = dec64_cmp(a, b);
-    return cmp != 2 && cmp > 0;
-}
-static inline int dec64_less(const dec64_t *a, const dec64_t *b) {
-    int cmp = dec64_cmp(a, b);
-    return cmp != 2 && cmp < 0;
-}
-
-static inline int dec64_equal(const dec64_t *a, const dec64_t *b) {
-    int cmp = dec64_cmp(a, b);
-    return cmp != 2 && cmp == 0;
-}
-
-static inline int dec64_lessequal(const dec64_t *a, const dec64_t *b) {
-    int cmp = dec64_cmp(a, b);
-    return cmp != 2 && cmp <= 0;
-}
-
-static inline int dec64_greaterequal(const dec64_t *a, const dec64_t *b) {
-    int cmp = dec64_cmp(a, b);
-    return cmp != 2 && cmp >= 0;
-}
-static inline int dec64_is_unordered(const dec64_t *a, const dec64_t *b) {
-    return dec64_cmp(a,b) == 2;
-}
+__INTF_DEC_GREATER(dec64)
+__INTF_DEC_LESS(dec64)
+__INTF_DEC_EQUAL(dec64)
+__INTF_DEC_LESSEQUAL(dec64)
+__INTF_DEC_GREATEREQUAL(dec64)
+__INTF_DEC_IS_UNORDERED(dec64)
 
 /* Scientific functions */
-__INTF_DEC_FUNC1(log10, dec64);
-__INTF_DEC_FUNC1(atan,  dec64);
-__INTF_DEC_FUNC1(sqrt,  dec64);
-__INTF_DEC_FUNC1(asin,  dec64);
-__INTF_DEC_FUNC1(acos,  dec64);
-__INTF_DEC_FUNC1(sin,  dec64);
-__INTF_DEC_FUNC1(cos,  dec64);
-__INTF_DEC_FUNC1(abs,  dec64);
+__INTF_DEC_FUNC1(log10,   dec64);
+__INTF_DEC_FUNC1(atan,    dec64);
+__INTF_DEC_FUNC1(sqrt,    dec64);
+__INTF_DEC_FUNC1(asin,    dec64);
+__INTF_DEC_FUNC1(acos,    dec64);
+__INTF_DEC_FUNC1(sin,     dec64);
+__INTF_DEC_FUNC1(cos,     dec64);
+__INTF_DEC_FUNC1(abs,     dec64);
 __INTF_DEC_FUNC1(exp10m1, dec64);
 
 /* String conversion */
@@ -240,5 +220,11 @@ void internal_to_dec64(const intern_dec64_t *in, dec64_t *d);
 void normalize_intern_dec64(intern_dec64_t *v);
 
 extern const intern_dec64_t pow10m1_dec64[20][9];
+
+#define __print_dec64(x) ({                                      \
+            printf("%c", dec_sign[dec64_get_sign(&x)]);          \
+            print_uint128(dec64_get_coefficient(&x));            \
+            printf("e%d", dec64_get_exponent(&x));               \
+        })
 
 #endif /* DEC64_H */

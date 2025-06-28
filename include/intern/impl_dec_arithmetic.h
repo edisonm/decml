@@ -3,6 +3,33 @@
 #include <string.h> // for memset
 #include <ctype.h>
 
+// Returns rounded value after dividing val by 10^shift, with round-half-up.
+// If shift==0, returns val unchanged.
+#define __IMPL_DEC_BITS_DIV_POW10_ROUND(__dec)                          \
+    static bits_##__dec##_t __dec##_div_pow10_round(bits_##__dec##_t val, int shift) { \
+        if (shift <= 0) return val;                                     \
+        bits_##__dec##_t pow10 = __pow10_##__dec[shift];                \
+        bits_##__dec##_t rem = val % pow10;                             \
+        bits_##__dec##_t half = pow10 / 2;                              \
+        val /= pow10;                                                   \
+        /* Round up if remainder >= half.*/                             \
+        if (rem > half || (rem == half && (val % 2))) /* ties to even (for banker's rounding) */ \
+            val++;                                                      \
+        return val;                                                     \
+    }
+
+#define __IMPL_DEC_BITS_DIV_POW10_ROUND_UP(__dec)                       \
+    static void __dec##_div_pow10_round_up(bits_##__dec##_t *val,       \
+                                           bits_##__dec##_t rem,        \
+                                           int shift) {                 \
+        if (shift <= 0) return;                                         \
+        bits_##__dec##_t pow10 = __pow10_##__dec[shift];                \
+        bits_##__dec##_t half = pow10 / 2;                              \
+        /* Round up if remainder >= half.*/                             \
+        if (rem > half || (rem == half && (*val % 2))) /* ties to even (for banker's rounding) */ \
+            (*val)++;                                                   \
+    }
+
 #define __IMPL_INTERN_DEC_ADD(__dec)                                    \
     void intern_##__dec##_add(intern_##__dec##_t *result, const intern_##__dec##_t *a, \
                               const intern_##__dec##_t *b) {            \
@@ -32,8 +59,9 @@
                                                                         \
         int exp_a = a->exponent;                                        \
         int exp_b = b->exponent;                                        \
-        bits_##__dec##_t coeff_a = a->coeff;                            \
-        bits_##__dec##_t coeff_b = b->coeff;                            \
+        bits_##__dec##_t crest = 0;                                     \
+        bits_##__dec##_t crest_a = 0, coeff_a = a->coeff;               \
+        bits_##__dec##_t crest_b = 0, coeff_b = b->coeff;               \
                                                                         \
         if (coeff_a==0 || coeff_b == 0) {                               \
             if (coeff_a != 0) {                                         \
@@ -51,37 +79,82 @@
         normalize_coeff_exp_##__dec(&coeff_a, &exp_a);                  \
         normalize_coeff_exp_##__dec(&coeff_b, &exp_b);                  \
                                                                         \
+        /* printf("a0=["); __print_bits_##__dec(coeff_a); printf(","); printf("%d,", exp_a); __print_bits_##__dec(crest_a); printf("]\n"); */ \
+        /* printf("b0=["); __print_bits_##__dec(coeff_b); printf(","); printf("%d,", exp_b); __print_bits_##__dec(crest_b); printf("]\n"); */ \
+                                                                        \
+        int shift = 0;                                                  \
         /* Align exponents */                                           \
         if (exp_a > exp_b) {                                            \
-            int shift = exp_a - exp_b;                                  \
-            if (shift < I_##__dec##_MAX_DIGITS)  /* prevent excessive loss of precision */ \
+            shift = exp_a - exp_b;                                      \
+            if (shift < I_##__dec##_MAX_DIGITS) { /* prevent excessive loss of precision */ \
+                crest_b = coeff_b % __pow10_##__dec[shift];             \
                 coeff_b /= __pow10_##__dec[shift];                      \
-            else                                                        \
+            } else {                                                    \
+                crest_b = coeff_b;                                      \
                 coeff_b = 0;                                            \
+            }                                                           \
             exp_b = exp_a;                                              \
         } else if (exp_b > exp_a) {                                     \
-            int shift = exp_b - exp_a;                                  \
-            if (shift < I_##__dec##_MAX_DIGITS)                         \
+            shift = exp_b - exp_a;                                      \
+            if (shift < I_##__dec##_MAX_DIGITS) {                       \
+                crest_a = coeff_a % __pow10_##__dec[shift];             \
                 coeff_a /= __pow10_##__dec[shift];                      \
-            else                                                        \
+            } else {                                                    \
+                crest_a = coeff_a;                                      \
                 coeff_a = 0;                                            \
+            }                                                           \
             exp_a = exp_b;                                              \
         }                                                               \
+        /* printf("a1=["); __print_bits_##__dec(coeff_a); printf(","); printf("%d,", exp_a); __print_bits_##__dec(crest_a); printf("]\n"); */ \
+        /* printf("b1=["); __print_bits_##__dec(coeff_b); printf(","); printf("%d,", exp_b); __print_bits_##__dec(crest_b); printf("]\n"); */ \
                                                                         \
         if (a->sign == b->sign) {                                       \
             if (coeff_a >= UINT_##__dec##_MAX - coeff_b) {              \
                 result->coeff = coeff_a/10+coeff_b/10+(coeff_a%10+coeff_b%10)/10; \
+                if (0 < shift && shift <= I_##__dec##_MAX_DIGITS) {     \
+                    crest = ((coeff_a%10+coeff_b%10)%10)* __pow10_##__dec[shift-1] \
+                        + (crest_a + crest_b+5)/10;                     \
+                    if (crest >= __pow10_##__dec[shift]) {              \
+                        crest -= __pow10_##__dec[shift];                \
+                        result->coeff++;                                \
+                    }                                                   \
+                };                                                      \
                 exp_a++;                                                \
             } else {                                                    \
-                result->coeff  = coeff_a + coeff_b;                     \
+                /* printf("a2=["); __print_bits_##__dec(coeff_a); printf(","); printf("%d]\n", exp_a); */ \
+                /* printf("b2=["); __print_bits_##__dec(coeff_b); printf(","); printf("%d]\n", exp_b); */ \
+                result->coeff = coeff_a + coeff_b;                      \
+                crest = crest_a + crest_b;                              \
+                /* printf("shift=%d, crest=%d\n", shift, crest); */     \
+                /* printf("+result->coeff="); __print_bits_##__dec(result->coeff); printf("\n"); */ \
+                __dec##_div_pow10_round_up(&(result->coeff), crest, shift); \
+                /* printf("-result->coeff="); __print_bits_##__dec(result->coeff); printf("\n"); */ \
             }                                                           \
             result->sign = a->sign;                                     \
         } else {                                                        \
             if (coeff_a > coeff_b) {                                    \
                 result->coeff = coeff_a - coeff_b;                      \
+                if (shift <= I_##__dec##_MAX_DIGITS && crest_b) {       \
+                    result->coeff--;                                    \
+                    crest = crest_a + (__pow10_##__dec[shift] - crest_b); \
+                    if (crest >= __pow10_##__dec[shift]) {              \
+                        crest -= __pow10_##__dec[shift];                \
+                        result->coeff++;                                \
+                    }                                                   \
+                }                                                       \
+                __dec##_div_pow10_round_up(&(result->coeff), crest, shift); \
                 result->sign = a->sign;                                 \
             } else {                                                    \
                 result->coeff = coeff_b - coeff_a;                      \
+                if (shift <= I_##__dec##_MAX_DIGITS && crest_a) {       \
+                    result->coeff--;                                    \
+                    crest = crest_b + (__pow10_##__dec[shift] - crest_a); \
+                    if (crest >= __pow10_##__dec[shift]) {              \
+                        crest -= __pow10_##__dec[shift];                \
+                        result->coeff++;                                \
+                    }                                                   \
+                }                                                       \
+                __dec##_div_pow10_round_up(&(result->coeff), crest, shift); \
                 result->sign = b->sign;                                 \
             }                                                           \
         }                                                               \

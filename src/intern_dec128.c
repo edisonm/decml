@@ -15,17 +15,19 @@
 __IMPL_CONST_INTERN_DEC(dec128, pi, 0, 
                         ((__uint128_t)3141592653589793238ULL * 10000000000000000000ULL)
                         + 4626433832795028842ULL,
-                        -37, DEC_NORMAL);
+                        -I_dec128_MAX_DIGITS+1, DEC_NORMAL);
 // 33219280948873623478703194294893901759e-37
 __IMPL_CONST_INTERN_DEC(dec128, log10_2, 0, 
                         ((__uint128_t)3321928094887362347ULL * 10000000000000000000ULL)
                         + 8703194294893901759ULL,
-                        -37, DEC_NORMAL);
+                        -I_dec128_MAX_DIGITS+1, DEC_NORMAL);
 
 __IMPL_CONST_INTERN_DEC(dec128, log_10, 0,
                         ((__uint128_t)2302585092994045684ULL * 10000000000000000000ULL)
                         +  179914546843642076ULL,
-                        -37, DEC_NORMAL);
+                        -I_dec128_MAX_DIGITS+1, DEC_NORMAL);
+
+__IMPL_CONST_INTERN_DEC(dec128, epsilon, 0, (__uint128_t)1ULL, -I_dec128_MAX_DIGITS, DEC_NORMAL);
 
 void print_uint128(__uint128_t n) {
     if (n > UINT64_MAX) {

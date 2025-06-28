@@ -83,7 +83,7 @@ int intern_dec128_set_str(intern_dec128_t *out, const char *str) {
             coeff128 *= 10;
         }
     }
-    if (coeff128 >= I_DEC128_SUP_COEFF || I_DEC128_SUP_COEFF - coeff128 <= frac_part) {
+    if (coeff128 > UINT128_MAX - frac_part) {
         coeff128 = coeff128 / 10 + (frac_part + coeff128 % 10) / 10;
         exp++;
     } else {
