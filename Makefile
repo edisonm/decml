@@ -39,7 +39,7 @@ bin/intern_%.o:src/intern/*.c include/intern/dec64.h
 bin/%.o: tests/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-bin/%: tests/%.o bin/test_dec_common.o bin/test_dec64_common.o bin/test_dec128_common.o $(LIBS)
+bin/%: tests/%.o bin/test_dec_common.o $(LIBS)
 	$(CC) $(CFLAGS) -o $@ $^
 
 tests:

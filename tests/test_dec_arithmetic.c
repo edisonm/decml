@@ -3,8 +3,6 @@
 #include "dec64.h"
 #include "dec128.h"
 #include "test_dec.h"
-#include "test_dec64.h"
-#include "test_dec128.h"
 
 int main() {
     int failed = 0;
