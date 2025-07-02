@@ -7,7 +7,7 @@ extern const uint64_t __pow10_dec64[];
 extern const __uint128_t __pow10_dec128[];
 uint64_t factorial(int n);
 
-#define __INTF_INTERN_DEC(__name, __dec, __result, __x)             \
+#define __INTF_INTERN_DEC(__name, __dec)                            \
     void intern_##__dec##_##__name(intern_##__dec##_t *result,      \
                                    const intern_##__dec##_t  *a)
 

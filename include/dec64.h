@@ -202,6 +202,7 @@ __INTF_DEC_IS_UNORDERED(dec64)
 
 /* Scientific functions */
 __INTF_DEC_FUNC1(log10,   dec64);
+__INTF_DEC_FUNC1(log,     dec64);
 __INTF_DEC_FUNC1(atan,    dec64);
 __INTF_DEC_FUNC1(sqrt,    dec64);
 __INTF_DEC_FUNC1(asin,    dec64);
@@ -210,6 +211,10 @@ __INTF_DEC_FUNC1(sin,     dec64);
 __INTF_DEC_FUNC1(cos,     dec64);
 __INTF_DEC_FUNC1(abs,     dec64);
 __INTF_DEC_FUNC1(exp10m1, dec64);
+__INTF_DEC_FUNC1(expm1,   dec64);
+__INTF_DEC_FUNC1(sinh,    dec64);
+__INTF_DEC_FUNC1(cosh,    dec64);
+__INTF_DEC_FUNC1(tanh,    dec64);
 
 /* String conversion */
 int dec64_set_str(dec64_t *result, const char *str);

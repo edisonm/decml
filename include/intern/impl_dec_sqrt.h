@@ -38,7 +38,8 @@
                                                                         \
         /* Compute sqrt of coeff using Newton-Raphson */                \
                                                                         \
-        /* Initial guess bigger than the actual root so that the residual will be positive: */ \
+        /* Initial guess bigger than the actual root */                 \
+        /* so that the residual will be positive: */                    \
         bits_##__dec##_t x = 1;                                         \
         while (x*x < coeff && x < (bits_##__dec##_t)1<<(I_##__dec##_BITS/2)) { \
             x *= 2;                                                     \
@@ -62,9 +63,10 @@
             x = x_next;                                                 \
         }                                                               \
                                                                         \
-        /* since we approximated the root from the right, it could be that the value */ \
-        /* at the left is more precise, so we can prove that by taking delta=1 and */ \
-        /* simplifying the expressions, the next simple line will improve x: */ \
+        /* since we approximate the root from the right, it could be */ \
+        /* that the value at the left is more precise, we can prove */  \
+        /* that by taking delta=1 and simplifying the expressions, */   \
+        /* the next simple line will improve x: */                      \
         if (x <= residual)                                              \
             x--;                                                        \
                                                                         \

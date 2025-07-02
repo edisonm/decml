@@ -1,5 +1,5 @@
 #define __IMPL_INTERN_DEC_ATAN(__dec, __bitsm1)                         \
-    __INTF_INTERN_DEC(atan, __dec, result, a) {                         \
+    __INTF_INTERN_DEC(atan, __dec) {                                    \
         intern_##__dec##_t b = *a, t, u, v;                             \
         int a_sign = a->sign;                                           \
         int b_sign = 0;                                                 \

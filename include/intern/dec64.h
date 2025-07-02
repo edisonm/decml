@@ -36,7 +36,7 @@ extern const char dec_sign[];
 
 extern const intern_dec64_t intern_dec64_zero, intern_dec64_one, intern_dec64_two,
     intern_dec64_pi, intern_dec64_nan, intern_dec64_inf, intern_dec64_neginf,
-    intern_dec64_log10_2, intern_dec64_log_10, intern_dec64_epsilon;
+    intern_dec64_log2_10, intern_dec64_log_10, intern_dec64_log10_e, intern_dec64_epsilon;
 
 extern const intern_dec64_t pow10m1_dec64[20][9];
 
@@ -72,15 +72,20 @@ __INTF_DEC_GREATEREQUAL(intern_dec64);
 __INTF_DEC_IS_UNORDERED(intern_dec64);
 
 /* Scientific functions */
-__INTF_INTERN_DEC(sqrt,  dec64, r, a);
-__INTF_INTERN_DEC(log10, dec64, r, a);
-__INTF_INTERN_DEC(atan,  dec64, r, a);
-__INTF_INTERN_DEC(abs,   dec64, r, a);
-__INTF_INTERN_DEC(asin,  dec64, r, a);
-__INTF_INTERN_DEC(acos,  dec64, r, a);
-__INTF_INTERN_DEC(sin,   dec64, r, a);
-__INTF_INTERN_DEC(cos,   dec64, r, a);
-__INTF_INTERN_DEC(exp10m1, dec64, r, a);
+__INTF_INTERN_DEC(abs,     dec64);
+__INTF_INTERN_DEC(sqrt,    dec64);
+__INTF_INTERN_DEC(log10,   dec64);
+__INTF_INTERN_DEC(log,     dec64);
+__INTF_INTERN_DEC(atan,    dec64);
+__INTF_INTERN_DEC(asin,    dec64);
+__INTF_INTERN_DEC(acos,    dec64);
+__INTF_INTERN_DEC(sin,     dec64);
+__INTF_INTERN_DEC(cos,     dec64);
+__INTF_INTERN_DEC(exp10m1, dec64);
+__INTF_INTERN_DEC(expm1,   dec64);
+__INTF_INTERN_DEC(sinh,    dec64);
+__INTF_INTERN_DEC(cosh,    dec64);
+__INTF_INTERN_DEC(tanh,    dec64);
 
 int intern_dec64_set_str(intern_dec64_t *out, const char *str);
 int intern_dec64_get_str(const intern_dec64_t *d, char *buf, size_t bufsize);
