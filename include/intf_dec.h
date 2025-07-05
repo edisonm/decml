@@ -35,5 +35,5 @@
         return cmp == 2;                                                \
     }
 
-#define __INTF_DEC_FUNC1(__func, __dec_t) \
-    void __dec_t##_##__func(__dec_t##_t *result, const __dec_t##_t *a)
+#define __INTF_DEC_FUNC1(__func, __dec)                                 \
+    void __dec##_##__func(__dec##_t *result, const __dec##_t *a)

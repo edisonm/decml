@@ -3,12 +3,12 @@
 #include <string.h> // for memset, strncpy
 #include <ctype.h>
 
-#define __IMPL_DEC_SET_STR(__dec_t)                             \
-    int __dec_t##_set_str(__dec_t##_t *d, const char *str) {    \
-        intern_##__dec_t##_t out;                               \
-        int err = intern_##__dec_t##_set_str(&out, str);        \
+#define __IMPL_DEC_SET_STR(__dec)                               \
+    int __dec##_set_str(__dec##_t *d, const char *str) {        \
+        intern_##__dec##_t out;                                 \
+        int err = intern_##__dec##_set_str(&out, str);          \
         if (err != 0) return err;                               \
-        internal_to_##__dec_t(&out, d);                         \
+        internal_to_##__dec(&out, d);                           \
         return 0;                                               \
     }
 
