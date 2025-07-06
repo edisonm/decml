@@ -1,4 +1,4 @@
-#define __IMPL_INTERN_DEC_LOG10(__dec)                                  \
+#define __IMPL_INTERN_DEC_log10(__dec)                                  \
     void intern_##__dec##_log10(intern_##__dec##_t *result,             \
                                 const intern_##__dec##_t *x) {          \
         if (x->sign) {                                                  \
@@ -60,7 +60,7 @@
         intern_##__dec##_add(result, &r, &b);                           \
 }
 
-#define __IMPL_INTERN_DEC_LOG(__dec)                                    \
+#define __IMPL_INTERN_DEC_log(__dec)                                    \
     void intern_##__dec##_log(intern_##__dec##_t *result,               \
                               const intern_##__dec##_t *x) {            \
         intern_##__dec##_t y;                                           \

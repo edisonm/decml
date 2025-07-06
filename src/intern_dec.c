@@ -70,10 +70,3 @@ const __uint128_t __pow10_dec128[] = {
 const char dec_sign[] = {' ','-'};
 
 const char *dec_special[] = {"", "(NAN)", "(INF)"};
-
-/* Helper: integer factorial using uint64_t, up to 19! (fits safely) */
-uint64_t factorial(int n) {
-    uint64_t r = 1;
-    for (int i = 2; i <= n; ++i) r *= i;
-    return r;
-}

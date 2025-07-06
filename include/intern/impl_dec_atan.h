@@ -1,6 +1,8 @@
-#define __IMPL_INTERN_DEC_ATAN(__dec, __bitsm1)                         \
-    __INTF_INTERN_DEC(atan, __dec) {                                    \
+#define __IMPL_INTERN_DEC_atan(__dec)                                   \
+    void intern_##__dec##_atan(intern_##__dec##_t *result,              \
+                               const intern_##__dec##_t *a) {           \
         intern_##__dec##_t b = *a, t, u, v;                             \
+        int __bitsm1 = intern_##__dec##_BITS-1;                         \
         int a_sign = a->sign;                                           \
         int b_sign = 0;                                                 \
         bits_##__dec##_t y_coeff = 0;                                   \

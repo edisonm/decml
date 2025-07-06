@@ -53,13 +53,10 @@ int main(void) {
         {"3", "2", 1},
         {"2", "3", 0}
     };
-    
-    RUN_TESTS_i2(tests_i2, equal);
-    RUN_TESTS_i2(tests_i2, less);
-    RUN_TESTS_i2(tests_i2, greater);
-    RUN_TESTS_i2(tests_i2, lessequal);
-    RUN_TESTS_i2(tests_i2, greaterequal);
+
+    RUN_TESTS(i2);
 
     report_failed(failed);
+
     return failed != 0;
 }

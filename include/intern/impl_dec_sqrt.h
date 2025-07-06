@@ -1,4 +1,4 @@
-#define __IMPL_INTERN_DEC_SQRT(__dec)                                   \
+#define __IMPL_INTERN_DEC_sqrt(__dec)                                   \
     void intern_##__dec##_sqrt(intern_##__dec##_t *result,              \
                                const intern_##__dec##_t *a) {           \
         /* Handle special values: */                                    \

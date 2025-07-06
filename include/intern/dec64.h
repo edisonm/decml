@@ -13,6 +13,7 @@
 // if we use for the coefficient as maximum 2^64-1
 #define I_dec64_MAX_DIGITS 19
 #define I_dec64_BITS       64
+#define intern_dec64_BITS  I_dec64_BITS
 
 typedef struct {
     int sign;
@@ -72,20 +73,8 @@ __INTF_DEC_GREATEREQUAL(intern_dec64);
 __INTF_DEC_IS_UNORDERED(intern_dec64);
 
 /* Scientific functions */
-__INTF_INTERN_DEC(abs,     dec64);
-__INTF_INTERN_DEC(sqrt,    dec64);
-__INTF_INTERN_DEC(log10,   dec64);
-__INTF_INTERN_DEC(log,     dec64);
-__INTF_INTERN_DEC(atan,    dec64);
-__INTF_INTERN_DEC(asin,    dec64);
-__INTF_INTERN_DEC(acos,    dec64);
-__INTF_INTERN_DEC(sin,     dec64);
-__INTF_INTERN_DEC(cos,     dec64);
-__INTF_INTERN_DEC(exp10m1, dec64);
-__INTF_INTERN_DEC(expm1,   dec64);
-__INTF_INTERN_DEC(sinh,    dec64);
-__INTF_INTERN_DEC(cosh,    dec64);
-__INTF_INTERN_DEC(tanh,    dec64);
+__DEC_FUNC_1_ALL(__INTF, intern_dec64);
+__INTF_DEC_FUNC_1(abs, intern_dec64);
 
 int intern_dec64_set_str(intern_dec64_t *out, const char *str);
 int intern_dec64_get_str(const intern_dec64_t *d, char *buf, size_t bufsize);

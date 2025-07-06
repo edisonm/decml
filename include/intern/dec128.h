@@ -10,7 +10,8 @@
 
 // Largest integer value with ≤38 decimal digits (max int128_t is >10^38)
 #define I_dec128_MAX_DIGITS 38
-#define I_dec128_BITS      128
+#define I_dec128_BITS       128
+#define intern_dec128_BITS  I_dec128_BITS
 
 #define I_DEC128_SUP_COEFF  ((__uint128_t)10000000000000000000ULL * 10000000000000000000ULL) // 10^38
 #define UINT128_MAX ((((__uint128_t)0xFFFFFFFFFFFFFFFFULL)<<64)|0xFFFFFFFFFFFFFFFFULL)
@@ -85,20 +86,8 @@ __INTF_DEC_GREATEREQUAL(intern_dec128)
 __INTF_DEC_IS_UNORDERED(intern_dec128)
 
 /* Scientific functions */
-__INTF_INTERN_DEC(sqrt,    dec128);
-__INTF_INTERN_DEC(log10,   dec128);
-__INTF_INTERN_DEC(log,     dec128);
-__INTF_INTERN_DEC(atan,    dec128);
-__INTF_INTERN_DEC(abs,     dec128);
-__INTF_INTERN_DEC(asin,    dec128);
-__INTF_INTERN_DEC(acos,    dec128);
-__INTF_INTERN_DEC(sin,     dec128);
-__INTF_INTERN_DEC(cos,     dec128);
-__INTF_INTERN_DEC(exp10m1, dec128);
-__INTF_INTERN_DEC(expm1,   dec128);
-__INTF_INTERN_DEC(sinh,    dec128);
-__INTF_INTERN_DEC(cosh,    dec128);
-__INTF_INTERN_DEC(tanh,    dec128);
+__DEC_FUNC_1_ALL(__INTF, intern_dec128);
+__INTF_DEC_FUNC_1(abs, intern_dec128);
 
 int intern_dec128_set_str(intern_dec128_t *out, const char *str);
 int intern_dec128_get_str(const intern_dec128_t *d, char *buf, size_t bufsize);

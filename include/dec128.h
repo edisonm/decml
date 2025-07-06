@@ -171,20 +171,8 @@ __INTF_DEC_GREATEREQUAL(dec128)
 __INTF_DEC_IS_UNORDERED(dec128)
 
 /* Scientific functions */
-__INTF_DEC_FUNC1(log10,   dec128);
-__INTF_DEC_FUNC1(log,     dec128);
-__INTF_DEC_FUNC1(atan,    dec128);
-__INTF_DEC_FUNC1(sqrt,    dec128);
-__INTF_DEC_FUNC1(asin,    dec128);
-__INTF_DEC_FUNC1(acos,    dec128);
-__INTF_DEC_FUNC1(sin,     dec128);
-__INTF_DEC_FUNC1(cos,     dec128);
-__INTF_DEC_FUNC1(abs,     dec128);
-__INTF_DEC_FUNC1(exp10m1, dec128);
-__INTF_DEC_FUNC1(expm1,   dec128);
-__INTF_DEC_FUNC1(sinh,    dec128);
-__INTF_DEC_FUNC1(cosh,    dec128);
-__INTF_DEC_FUNC1(tanh,    dec128);
+__DEC_FUNC_1_ALL(__INTF, dec128);
+__INTF_DEC_FUNC_1(abs, dec128);
 
 /* String conversion */
 int dec128_set_str(dec128_t *result, const char *str);

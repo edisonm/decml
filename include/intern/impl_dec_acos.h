@@ -1,5 +1,5 @@
 /* Implements acos(x) = 2 * atan(sqrt((1-x)/(1+x))) */
-#define __IMPL_INTERN_DEC_ACOS(__dec)                                   \
+#define __IMPL_INTERN_DEC_acos(__dec)                                   \
     void intern_##__dec##_acos(intern_##__dec##_t *result,              \
                                const intern_##__dec##_t *x) {           \
         /* Handle special values: */                                    \

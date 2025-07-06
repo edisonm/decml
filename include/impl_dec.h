@@ -1,4 +1,4 @@
-#define __IMPL_DEC_FUNC1(__func, __dec)                                 \
+#define __IMPL_DEC_FUNC_1(__func, __dec)                                \
     void __dec##_##__func(__dec##_t *result, const __dec##_t *a) {      \
         intern_##__dec##_t b, r;                                        \
         __dec##_to_internal(a, &b);                                     \

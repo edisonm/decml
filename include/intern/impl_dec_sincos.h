@@ -33,7 +33,7 @@
     }
 
 /* Main: Calculate sin(x) using Taylor series, argument reduction. */
-#define __IMPL_INTERN_DEC_SIN(__dec)                                    \
+#define __IMPL_INTERN_DEC_sin(__dec)                                    \
     void intern_##__dec##_sin(intern_##__dec##_t *result, const intern_##__dec##_t *x) { \
         /* Handle special values */                                     \
         if (intern_##__dec##_is_nan(x) || intern_##__dec##_is_inf(x)) { \
@@ -89,7 +89,7 @@
     }
 
 /* Main: Calculate cos(x) using Taylor series, argument reduction */
-#define __IMPL_INTERN_DEC_COS(__dec)                                    \
+#define __IMPL_INTERN_DEC_cos(__dec)                                    \
     void intern_##__dec##_cos(intern_##__dec##_t *result, const intern_##__dec##_t *x) { \
         /* Handle special values */                                     \
         if (intern_##__dec##_is_nan(x) || intern_##__dec##_is_inf(x)) { \
@@ -122,7 +122,7 @@
         /* Cosine Taylor series: sum_{k=0}^{N} (-1)^k y^{2k} / (2k)! */ \
         /* stop when the terms don't modify the sum anymore */          \
         intern_##__dec##_t sum, tmp;                                    \
-        sum = intern_##__dec##_one; /* first term is always 1 */        \
+        sum = intern_##__dec##_zero;                                    \
                                                                         \
         /* Precompute y^2 */                                            \
         intern_##__dec##_t y2;                                          \
@@ -144,9 +144,27 @@
                                                                         \
             sum = tmp;                                                  \
         }                                                               \
-                                                                        \
+        intern_##__dec##_add(&sum, &sum, &intern_##__dec##_one);        \
         if (negate) {                                                   \
             sum.sign = sum.sign?0:1;                                    \
         }                                                               \
         *result = sum;                                                  \
+    }
+
+#define __IMPL_INTERN_DEC_TAN(__dec)                                    \
+    void intern_##__dec##_tan(intern_##__dec##_t *result, const intern_##__dec##_t *x) { \
+        /* Handle special values */                                     \
+        if (intern_##__dec##_is_nan(x) || intern_##__dec##_is_inf(x)) { \
+            *result = intern_##__dec##_nan;                             \
+            return;                                                     \
+        }                                                               \
+        intern_##__dec##_t c;                                           \
+        intern_##__dec##_cos(&c, x);                                    \
+        if (intern_##__dec##_cmp(&c, &intern_##__dec##_zero)==0) {      \
+            *result = intern_##__dec##_set_inf(result, 0);              \
+            return;                                                     \
+        }                                                               \
+        intern_##__dec##_t s;                                           \
+        intern_##__dec##_sin(&s, x);                                    \
+        intern_##__dec##_div(result, &s, &c);                           \
     }

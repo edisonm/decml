@@ -4,7 +4,7 @@
    sqrt(1−x^2) can approach zero.
 */
 
-#define __IMPL_INTERN_DEC_ASIN(__dec)                                   \
+#define __IMPL_INTERN_DEC_asin(__dec)                                   \
     void intern_##__dec##_asin(intern_##__dec##_t *result, const intern_##__dec##_t *x) { \
         /* Handle special values: */                                    \
         if (intern_##__dec##_is_nan(x)) {                               \

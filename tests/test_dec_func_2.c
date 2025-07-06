@@ -54,11 +54,8 @@ int main() {
         {"1.84", __pow10_dec128[3], "6.5738987297836705921477041761654262855e264"} // 2^1 0 = 1024
     };
     
-    RUN_TESTS_2(tests_2, add);
-    RUN_TESTS_2(tests_2, sub);
-    RUN_TESTS_2(tests_2, mul);
-    RUN_TESTS_2(tests_2, div);
-    RUN_TESTS_2i(tests_2i, powi);
+    RUN_TESTS(2);
+    RUN_TESTS(2i);
     
     report_failed(failed);
     

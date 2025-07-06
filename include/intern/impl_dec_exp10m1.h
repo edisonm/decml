@@ -40,7 +40,7 @@
         *y = a;                                                         \
     }
 
-#define __IMPL_INTERN_DEC_EXP10M1(__dec)                                \
+#define __IMPL_INTERN_DEC_exp10m1(__dec)                                \
     void intern_##__dec##_exp10m1(intern_##__dec##_t *result, const intern_##__dec##_t *x) { \
         static intern_##__dec##_t fmax = {0, UINT_##__dec##_MAX, 0, DEC_NORMAL}; \
         static intern_##__dec##_t feps = {0, 0x1ULL, -20, DEC_NORMAL};  \
@@ -71,14 +71,14 @@
         intern_##__dec##_exp10m1_rec(x->coeff, x->exponent, result);    \
     }
 
-#define __IMPL_INTERN_DEC_EXPM1(__dec)                                  \
+#define __IMPL_INTERN_DEC_expm1(__dec)                                  \
     void intern_##__dec##_expm1(intern_##__dec##_t *result, const intern_##__dec##_t *x) { \
         intern_##__dec##_t y;                                           \
         intern_##__dec##_mul(&y, x, &intern_##__dec##_log10_e);         \
         intern_##__dec##_exp10m1(result, &y);                           \
     }
 
-#define __IMPL_INTERN_DEC_SINH(__dec)                                   \
+#define __IMPL_INTERN_DEC_sinh(__dec)                                   \
     void intern_##__dec##_sinh(intern_##__dec##_t *result, const intern_##__dec##_t *x) { \
         intern_##__dec##_t y, z, a, b, c, d;                            \
         intern_##__dec##_abs(&z, x);                                    \
@@ -91,7 +91,7 @@
         result->sign = x->sign;                                         \
     }
 
-#define __IMPL_INTERN_DEC_COSH(__dec)                                   \
+#define __IMPL_INTERN_DEC_cosh(__dec)                                   \
     void intern_##__dec##_cosh(intern_##__dec##_t *result, const intern_##__dec##_t *x) { \
         intern_##__dec##_t y, z, a, b, c, d;                            \
         intern_##__dec##_abs(&z, x);                                    \
@@ -103,7 +103,7 @@
         intern_##__dec##_add(result, &d, &intern_##__dec##_one); /* 1+y^2/(2*(y+1)) */ \
     }
 
-#define __IMPL_INTERN_DEC_TANH(__dec)                                   \
+#define __IMPL_INTERN_DEC_tanh(__dec)                                   \
     void intern_##__dec##_tanh(intern_##__dec##_t *result, const intern_##__dec##_t *x) { \
         static intern_##__dec##_t feps = {0, 1, -(I_##__dec##_MAX_DIGITS/6+1), DEC_NORMAL}; \
         intern_##__dec##_t y, z, a, b, c, d;                            \

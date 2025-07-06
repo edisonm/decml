@@ -14,8 +14,8 @@ OBJS = $(SRCS:.c=.o)
 
 TESTS= \
 	test_dec_func_1 \
+	test_dec_func_2 \
 	test_dec_compare \
-	test_dec_arithmetic \
 	test_dec64_str \
 	test_dec128_str
 
