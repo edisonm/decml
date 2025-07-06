@@ -13,15 +13,20 @@
         int n = 0;                                                      \
         if (!intern_##__dec##_is_nan(&n_real) && !intern_##__dec##_is_inf(&n_real)) { \
             /* n_real.coeff has absolute integer value, */              \
-            /* n_real.sign = +1 or -1 */                                \
-            n = n_real.sign * (int)n_real.coeff;                        \
+            /* n_real.sign = 0 or 1 */                                  \
+            if (n_real.exponent < -I_##__dec##_MAX_DIGITS)              \
+                n = 0;                                                  \
+            else if (n_real.exponent > 0)                               \
+                intern_##__dec##_set_nan(r);                            \
+            else                                                        \
+                n = (n_real.sign?-1:1) * (int)(n_real.coeff / __pow10_##__dec[-n_real.exponent]); \
         }                                                               \
         /* r = x - n * 2pi */                                           \
         intern_##__dec##_t n_two_pi;                                    \
         if (n == 0) {                                                   \
             *r = *x;                                                    \
         } else {                                                        \
-            intern_##__dec##_t n_val = { n < 0 ? -1 : 1, (uint64_t)(n < 0 ? -n : n), 0, DEC_NORMAL }; \
+            intern_##__dec##_t n_val = {n<0?1:0, (uint64_t)(n<0?-n:n), 0, DEC_NORMAL}; \
             intern_##__dec##_mul(&n_two_pi, &n_val, &two_pi);           \
             intern_##__dec##_sub(r, x, &n_two_pi);                      \
         }                                                               \
@@ -57,28 +62,20 @@
         }                                                               \
                                                                         \
         /* Sine Taylor series: sum_{k=0}^{N} (-1)^k y^{2k+1} / (2k+1)! */ \
-        /* We'll use up to k=7 (order 15, which is usually plenty for 16 decimal digits) */ \
-        intern_##__dec##_t term, sum, tmp;                              \
-        sum.sign = 0; sum.coeff = 0; sum.exponent = 0; sum.special = DEC_NORMAL; \
+        /* stop when the terms don't modify the sum anymore */          \
+        intern_##__dec##_t sum = y, tmp;                                \
                                                                         \
         /* Precompute y^n */                                            \
-        /* y_pow = y^(2k+1) */                                          \
-        intern_##__dec##_t y_pow = y;                                   \
+        /* term = y^(2k+1) */                                           \
+        intern_##__dec##_t term = y;                                    \
+        intern_##__dec##_t y2;                                          \
+        intern_##__dec##_mul(&y2, &y, &y);                              \
                                                                         \
-        for (int k = 0;; ++k) {                                         \
-            /* exponent = 2k+1 */                                       \
-            int n = 2*k+1;                                              \
-            bits_##__dec##_t fact = factorial(n);                       \
-                                                                        \
-            /* denom = fact */                                          \
-            intern_##__dec##_t denom = {1, fact, 0, DEC_NORMAL};        \
-                                                                        \
-            /* term = y_pow / denom */                                  \
-            intern_##__dec##_div(&term, &y_pow, &denom);                \
-            if (k % 2 == 1) {                                           \
-                /* Negative sign */                                     \
-                term.sign = -term.sign;                                 \
-            }                                                           \
+        for (int k = 1;; ++k) {                                         \
+            /* term *= -y2 / ((2*k)*(2*k+1)) */                         \
+            intern_##__dec##_mul(&tmp, &term, &y2);                     \
+            intern_##__dec##_t d = {1, (2*k)*(2*k+1), 0, DEC_NORMAL};   \
+            intern_##__dec##_div(&term, &tmp, &d);                      \
             /* sum = sum + term */                                      \
             intern_##__dec##_add(&tmp, &sum, &term);                    \
                                                                         \
@@ -86,17 +83,12 @@
                 break;                                                  \
                                                                         \
             sum = tmp;                                                  \
-            /* Prepare y_pow *= y*y for next (2(k+1)+1) */              \
-            /* y_pow *= y*y */                                          \
-            intern_##__dec##_t y2;                                      \
-            intern_##__dec##_mul(&y2, &y, &y);                          \
-            intern_##__dec##_mul(&y_pow, &y_pow, &y2);                  \
         }                                                               \
                                                                         \
         *result = sum;                                                  \
     }
 
-// Main: Calculate cos(x) using Taylor series, argument reduction
+/* Main: Calculate cos(x) using Taylor series, argument reduction */
 #define __IMPL_INTERN_DEC_COS(__dec)                                    \
     void intern_##__dec##_cos(intern_##__dec##_t *result, const intern_##__dec##_t *x) { \
         /* Handle special values */                                     \
@@ -128,9 +120,8 @@
         }                                                               \
                                                                         \
         /* Cosine Taylor series: sum_{k=0}^{N} (-1)^k y^{2k} / (2k)! */ \
-        /* We'll use up to k=7 (order 14, usually enough for 16 decimal digits) */ \
-        const int N_TERMS = 7;                                          \
-        intern_##__dec##_t term, sum, tmp;                              \
+        /* stop when the terms don't modify the sum anymore */          \
+        intern_##__dec##_t sum, tmp;                                    \
         sum = intern_##__dec##_one; /* first term is always 1 */        \
                                                                         \
         /* Precompute y^2 */                                            \
@@ -138,21 +129,16 @@
         intern_##__dec##_mul(&y2, &y, &y);                              \
                                                                         \
         /* term = 1 (already in sum); for k=1 to N_TERMS, add next terms */ \
-        intern_##__dec##_t y_pow = intern_##__dec##_one; /* y^0 = 1 */  \
+        intern_##__dec##_t term = intern_##__dec##_one; /* y^0 = 1 */   \
                                                                         \
-        for (int k = 1; k <= N_TERMS; ++k) {                            \
-            /* y_pow *= y2   (always even powers for cosine) */         \
-            intern_##__dec##_mul(&y_pow, &y_pow, &y2);                  \
-            int n = 2*k;                                                \
-            uint64_t fact = factorial(n);                               \
-            intern_##__dec##_t denom = {1, fact, 0, DEC_NORMAL};        \
-            intern_##__dec##_div(&term, &y_pow, &denom);                \
-            if (k % 2 == 1) {                                           \
-                /* Negative sign for odd k */                           \
-                term.sign = -term.sign;                                 \
-            }                                                           \
+        for (int k = 1;; ++k) {                                         \
+            /* term *= -y2 / ((2*k-1)*(2*k))  (always even powers for cosine) */ \
+            intern_##__dec##_mul(&tmp, &term, &y2);                     \
+            intern_##__dec##_t d = {1, (2*k-1)*(2*k), 0, DEC_NORMAL};   \
+            intern_##__dec##_div(&term, &tmp, &d);                      \
             /* sum = sum + term */                                      \
             intern_##__dec##_add(&tmp, &sum, &term);                    \
+                                                                        \
             if (intern_##__dec##_cmp(&tmp, &sum)==0)                    \
                 break;                                                  \
                                                                         \
@@ -160,7 +146,7 @@
         }                                                               \
                                                                         \
         if (negate) {                                                   \
-            sum.sign = -sum.sign;                                       \
+            sum.sign = sum.sign?0:1;                                    \
         }                                                               \
         *result = sum;                                                  \
     }
