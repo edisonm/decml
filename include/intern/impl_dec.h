@@ -6,6 +6,7 @@
     __IMPL_CONST_INTERN_DEC(__dec, zero,    0, 0, 0, DEC_NORMAL);    \
     __IMPL_CONST_INTERN_DEC(__dec, one,     0, 1, 0, DEC_NORMAL);    \
     __IMPL_CONST_INTERN_DEC(__dec, two,     0, 2, 0, DEC_NORMAL);    \
+    __IMPL_CONST_INTERN_DEC(__dec, three,   0, 3, 0, DEC_NORMAL);    \
     __IMPL_CONST_INTERN_DEC(__dec, nan,     0, 0, 0, DEC_NAN);       \
     __IMPL_CONST_INTERN_DEC(__dec, inf,     0, 0, 0, DEC_INF);       \
     __IMPL_CONST_INTERN_DEC(__dec, neginf,  1, 0, 0, DEC_INF);

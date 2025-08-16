@@ -46,9 +46,10 @@ extern const char dec_sign[];
         })
 
 /// Constants (to be defined in a .c file)
-extern const intern_dec128_t intern_dec128_zero, intern_dec128_one, intern_dec128_two,
-    intern_dec128_pi, intern_dec128_nan, intern_dec128_inf, intern_dec128_neginf,
-    intern_dec128_log2_10, intern_dec128_log_10, intern_dec128_log10_e, intern_dec128_epsilon;
+extern const intern_dec128_t intern_dec128_zero, intern_dec128_one,
+    intern_dec128_two, intern_dec128_three, intern_dec128_pi, intern_dec128_nan,
+    intern_dec128_inf, intern_dec128_neginf, intern_dec128_log2_10,
+    intern_dec128_log_10, intern_dec128_log10_e, intern_dec128_epsilon;
 
 extern const intern_dec128_t pow10m1_dec128[40][9];
 

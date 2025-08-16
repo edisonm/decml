@@ -35,9 +35,10 @@ extern const char dec_sign[];
 
 #define __print_intern_dec64(x) printf("%c%lue%d%s", dec_sign[x.sign], x.coeff, x.exponent, dec_special[x.special])
 
-extern const intern_dec64_t intern_dec64_zero, intern_dec64_one, intern_dec64_two,
-    intern_dec64_pi, intern_dec64_nan, intern_dec64_inf, intern_dec64_neginf,
-    intern_dec64_log2_10, intern_dec64_log_10, intern_dec64_log10_e, intern_dec64_epsilon;
+extern const intern_dec64_t intern_dec64_zero, intern_dec64_one,
+    intern_dec64_two, intern_dec64_three, intern_dec64_pi, intern_dec64_nan,
+    intern_dec64_inf, intern_dec64_neginf, intern_dec64_log2_10,
+    intern_dec64_log_10, intern_dec64_log10_e, intern_dec64_epsilon;
 
 extern const intern_dec64_t pow10m1_dec64[20][9];
 

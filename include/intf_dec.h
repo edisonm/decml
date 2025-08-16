@@ -51,7 +51,8 @@
     __pref##_DEC_FUNC_1(expm1,   __dec);        \
     __pref##_DEC_FUNC_1(sinh,    __dec);        \
     __pref##_DEC_FUNC_1(cosh,    __dec);        \
-    __pref##_DEC_FUNC_1(tanh,    __dec);
+    __pref##_DEC_FUNC_1(tanh,    __dec);        \
+    __pref##_DEC_FUNC_1(cbrt,    __dec);
 
 #define __DEC_FUNC_2_ALL(__pref, __dec)         \
     __pref##_DEC_FUNC_2(add,     __dec);        \

@@ -4,11 +4,12 @@
 #include "impl_dec_str.h"
 #include "impl_dec_abs.h"
 
-const dec128_t dec128_zero = encode_dec128(0, 0, 0);
-const dec128_t dec128_one  = encode_dec128(0, 1, 0);
-const dec128_t dec128_two  = encode_dec128(0, 2, 0);
-const dec128_t dec128_nan  = { dec128_NAN_BITS };
-const dec128_t dec128_inf  = { dec128_INF_BITS };
+const dec128_t dec128_zero  = encode_dec128(0, 0, 0);
+const dec128_t dec128_one   = encode_dec128(0, 1, 0);
+const dec128_t dec128_two   = encode_dec128(0, 2, 0);
+const dec128_t dec128_three = encode_dec128(0, 3, 0);
+const dec128_t dec128_nan   = { dec128_NAN_BITS };
+const dec128_t dec128_inf   = { dec128_INF_BITS };
 const dec128_t dec128_epsilon = encode_dec128(0, 1, -dec128_MAX_DIGITS);
 
 __IMPL_DEC_SET_STR(dec128)

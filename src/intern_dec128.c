@@ -5,6 +5,7 @@
 #include "intern/impl_dec_compare.h"
 #include "intern/impl_dec_atan.h"
 #include "intern/impl_dec_sqrt.h"
+#include "intern/impl_dec_cbrt.h"
 #include "intern/impl_dec_sincos.h"
 #include "intern/impl_dec_asin.h"
 #include "intern/impl_dec_acos.h"
