@@ -38,6 +38,9 @@
 #define __INTF_DEC_FUNC_1(__func, __dec)                                \
     void __dec##_##__func(__dec##_t *result, const __dec##_t *a)
 
+#define __INTF_DEC_FUNC_2(__func, __dec)                                \
+    void __dec##_##__func(__dec##_t *result, const __dec##_t *a, const __dec##_t *b)
+
 #define __DEC_FUNC_1_ALL(__pref, __dec)         \
     __pref##_DEC_FUNC_1(sqrt,    __dec);        \
     __pref##_DEC_FUNC_1(log10,   __dec);        \
@@ -49,19 +52,28 @@
     __pref##_DEC_FUNC_1(cos,     __dec);        \
     __pref##_DEC_FUNC_1(exp10m1, __dec);        \
     __pref##_DEC_FUNC_1(expm1,   __dec);        \
+    __pref##_DEC_FUNC_1(exp10,   __dec);        \
+    __pref##_DEC_FUNC_1(exp,     __dec);        \
     __pref##_DEC_FUNC_1(sinh,    __dec);        \
     __pref##_DEC_FUNC_1(cosh,    __dec);        \
     __pref##_DEC_FUNC_1(tanh,    __dec);        \
-    __pref##_DEC_FUNC_1(cbrt,    __dec);
+    __pref##_DEC_FUNC_1(cbrt,    __dec);        \
+    __pref##_DEC_FUNC_1(floor,   __dec);        \
+    __pref##_DEC_FUNC_1(ceil,    __dec);        \
+    __pref##_DEC_FUNC_1(round,   __dec);
 
 #define __DEC_FUNC_2_ALL(__pref, __dec)         \
     __pref##_DEC_FUNC_2(add,     __dec);        \
     __pref##_DEC_FUNC_2(sub,     __dec);        \
     __pref##_DEC_FUNC_2(mul,     __dec);        \
-    __pref##_DEC_FUNC_2(div,     __dec);
+    __pref##_DEC_FUNC_2(div,     __dec);        \
+    __pref##_DEC_FUNC_2(pow,     __dec);        \
+    __pref##_DEC_FUNC_2(min,     __dec);        \
+    __pref##_DEC_FUNC_2(max,     __dec);        \
+    __pref##_DEC_FUNC_2(mod,     __dec);
 
 #define __DEC_FUNC_2i_ALL(__pref, __dec)        \
-    __pref##_DEC_FUNC_2i(powi,     __dec);
+    __pref##_DEC_FUNC_2i(powi,    __dec);
 
 #define __DEC_FUNC_i2_ALL(__pref, __dec)                \
     __pref##_DEC_FUNC_i2(equal,        __dec);          \

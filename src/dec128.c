@@ -14,16 +14,13 @@ const dec128_t dec128_epsilon = encode_dec128(0, 1, -dec128_MAX_DIGITS);
 
 __IMPL_DEC_SET_STR(dec128)
 __IMPL_DEC_GET_STR(dec128)
-__IMPL_DEC_FUNC2(add,     dec128)
-__IMPL_DEC_FUNC2(sub,     dec128)
-__IMPL_DEC_FUNC2(mul,     dec128)
-__IMPL_DEC_FUNC2(div,     dec128)
 __IMPL_DEC_FUNC2i(powi,   dec128)
 __IMPL_DEC_FUNCi2(cmp,    dec128)
 
 __DEC_FUNC_1_ALL(__IMPL, dec128)
+__DEC_FUNC_2_ALL(__IMPL, dec128)
 
-__IMPL_DEC_ABS(dec128)
+__IMPL_DEC_abs(dec128)
 __IMPL_NORMALIZE_TO_DEC(dec128)
-__IMPL_DEC_TO_INTERNAL(dec128)
+__IMPL_DEC_TO_INTERNAL(dec128, dec128)
 __IMPL_INTERNAL_TO_DEC(dec128)

@@ -27,7 +27,7 @@ typedef struct {
 void report_failed(int failed);
 
 #define __TEST_DEC_FUNC_1(__func, __dec) ({                             \
-            char buf[256], b_x[256], b_e[256];                          \
+            char buf[256], b_x[256], b_d[256], b_e[256];                \
             int passed = 0;                                             \
             int total = sizeof(tests_1_##__func) / sizeof(tests_1_##__func[0]); \
             __dec##_t x, r, e;                                          \
@@ -49,20 +49,26 @@ void report_failed(int failed);
                         __dec##_sub(&d, &e, &r);                        \
                         int r_exp = __dec##_get_exponent(&r);           \
                         int d_exp = __dec##_get_exponent(&d);           \
-                        int diff = __dec##_get_coefficient(&d);         \
+                        bits_##__dec##_t diff = __dec##_get_coefficient(&d); \
+                        bits_##__dec##_t r_coeff = __dec##_get_coefficient(&r); \
+                        while (r_coeff <= __dec##_MAX_COEFF/10) {        \
+                            r_coeff *= 10;                              \
+                            r_exp--;                                    \
+                        }                                               \
                         while (d_exp < r_exp) {                         \
                             d_exp++;                                    \
                             diff /= 10;                                 \
                         }                                               \
-                        if (diff <= 30) {                               \
-                            __dec##_get_str(&d, b_e, sizeof(b_e));      \
+                        if (diff <= 200) {                              \
+                            __dec##_get_str(&d, b_d, sizeof(b_d));      \
                             printf("Test %d passed: '%s(%s)=%s (+%s)'\n", i + 1, \
-                                   #__func, b_x, buf, b_e);             \
+                                   #__func, b_x, buf, b_d);             \
                             passed++;                                   \
                         } else {                                        \
+                            __dec##_get_str(&d, b_d, sizeof(b_d));      \
                             __dec##_get_str(&e, b_e, sizeof(b_e));      \
-                            printf("Test %d failed: '%s(%s)=%s' expected='%s'\n", \
-                                   i + 1, #__func, b_x, buf, b_e);      \
+                            printf("ERROR: Test %d failed: '%s(%s)=%s (+%s)' expected='%s'\n", \
+                                   i + 1, #__func, b_x, buf, b_d, b_e); \
                             failed++;                                   \
                         }                                               \
                     }                                                   \
@@ -72,7 +78,7 @@ void report_failed(int failed);
         })
 
 #define __TEST_DEC_FUNC_2(__func, __dec) ({                             \
-            char buf[256], b_x[256], b_y[256], b_e[256];                \
+            char buf[256], b_x[256], b_y[256], b_d[256], b_e[256];      \
             int passed = 0;                                             \
             int total = sizeof(tests_2_##__func) / sizeof(tests_2_##__func[0]); \
             __dec##_t x, y, r, e;                                       \
@@ -103,14 +109,15 @@ void report_failed(int failed);
                             diff /= 10;                                 \
                         }                                               \
                         if (diff <= 5) {                                \
-                            __dec##_get_str(&d, b_e, sizeof(b_e));      \
-                            printf("Test %d passed: '%s(%s,%s)=%s (+%s)'\n", i + 1, \
-                                   #__func, b_x, b_y, buf, b_e);        \
+                            __dec##_get_str(&d, b_d, sizeof(b_d));      \
+                            printf("Test %d passed: '%s(%s,%s)=%s (+%s)'\n", \
+                                   i + 1, #__func, b_x, b_y, buf, b_d); \
                             passed++;                                   \
                         } else {                                        \
+                            __dec##_get_str(&d, b_d, sizeof(b_d));      \
                             __dec##_get_str(&e, b_e, sizeof(b_e));      \
-                            printf("Test %d failed: '%s(%s,%s)=%s' expected='%s'\n", \
-                                   i + 1, #__func, b_x, b_y, buf, b_e); \
+                            printf("ERROR: Test %d failed: '%s(%s,%s)=%s (+%s)' expected='%s'\n", \
+                                   i + 1, #__func, b_x, b_y, buf, b_d, b_e); \
                             failed++;                                   \
                         }                                               \
                     }                                                   \

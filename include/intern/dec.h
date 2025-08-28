@@ -9,4 +9,7 @@ extern const __uint128_t __pow10_dec128[];
 #define __IMPL_INTERN_DEC_FUNC_1(__func, __dec) \
     __IMPL_INTERN_DEC_##__func(__dec)
 
+#define __IMPL_INTERN_DEC_FUNC_2(__func, __dec) \
+    __IMPL_INTERN_DEC_##__func(__dec)
+
 #endif // INTERN_DEC_H

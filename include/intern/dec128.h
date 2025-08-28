@@ -30,10 +30,13 @@ typedef struct {
 
 void print_uint128(__uint128_t n);
 
-#define print_bits_dec128 print_uint128
-#define bits_dec128_t     __uint128_t
-#define UINT_dec128_MAX   UINT128_MAX
-#define bits_ddec128_t    uint256_t
+#define print_bits_dec128       print_uint128
+#define bits_dec128_t           __uint128_t
+#define bits_intern_dec128_t    __uint128_t
+#define bits_ddec128_t          uint256_t
+#define UINT_dec128_MAX         UINT128_MAX
+#define UINT_intern_dec128_MAX  UINT128_MAX
+#define intern_dec128_MAX_COEFF UINT128_MAX
 
 extern const char dec_sign[];
 
@@ -69,10 +72,6 @@ static inline int intern_dec128_get_sign(const intern_dec128_t *d) {return d->si
 void normalize_coeff_exp_dec128(__uint128_t *coeff, int *exponent);
 
 /* Arithmetic operations */
-void intern_dec128_add(intern_dec128_t *result, const intern_dec128_t *a, const intern_dec128_t *b);
-void intern_dec128_sub(intern_dec128_t *result, const intern_dec128_t *a, const intern_dec128_t *b);
-void intern_dec128_mul(intern_dec128_t *result, const intern_dec128_t *a, const intern_dec128_t *b);
-void intern_dec128_div(intern_dec128_t *result, const intern_dec128_t *a, const intern_dec128_t *b);
 void intern_dec128_powi(intern_dec128_t *result, const intern_dec128_t *base, int64_t exp);
 
 /* Comparisons */
@@ -88,6 +87,7 @@ __INTF_DEC_IS_UNORDERED(intern_dec128)
 
 /* Scientific functions */
 __DEC_FUNC_1_ALL(__INTF, intern_dec128);
+__DEC_FUNC_2_ALL(__INTF, intern_dec128);
 __INTF_DEC_FUNC_1(abs, intern_dec128);
 
 int intern_dec128_set_str(intern_dec128_t *out, const char *str);

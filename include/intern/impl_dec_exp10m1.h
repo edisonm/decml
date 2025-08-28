@@ -78,6 +78,20 @@
         intern_##__dec##_exp10m1(result, &y);                           \
     }
 
+#define __IMPL_INTERN_DEC_exp(__dec)                                    \
+    void intern_##__dec##_exp(intern_##__dec##_t *result, const intern_##__dec##_t *x) { \
+        intern_##__dec##_t y;                                           \
+        intern_##__dec##_expm1(&y, x);                                  \
+        intern_##__dec##_add(result, &y, &intern_##__dec##_one);        \
+    }
+
+#define __IMPL_INTERN_DEC_exp10(__dec)                                  \
+    void intern_##__dec##_exp10(intern_##__dec##_t *result, const intern_##__dec##_t *x) { \
+        intern_##__dec##_t y;                                           \
+        intern_##__dec##_exp10m1(&y, x);                                \
+        intern_##__dec##_add(result, &y, &intern_##__dec##_one);        \
+    }
+
 #define __IMPL_INTERN_DEC_sinh(__dec)                                   \
     void intern_##__dec##_sinh(intern_##__dec##_t *result, const intern_##__dec##_t *x) { \
         intern_##__dec##_t y, z, a, b, c, d;                            \

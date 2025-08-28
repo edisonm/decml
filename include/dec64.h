@@ -184,10 +184,6 @@ static inline void dec64_set_inf(dec64_t *d, int sign) {
 }
 
 /* Arithmetic operations */
-void dec64_add( dec64_t *result, const dec64_t *a, const dec64_t *b);
-void dec64_sub( dec64_t *result, const dec64_t *a, const dec64_t *b);
-void dec64_mul( dec64_t *result, const dec64_t *a, const dec64_t *b);
-void dec64_div( dec64_t *result, const dec64_t *a, const dec64_t *b);
 void dec64_powi(dec64_t *result, const dec64_t *a, int exp);
 
 /* Arithmetic comparators */
@@ -202,13 +198,14 @@ __INTF_DEC_IS_UNORDERED(dec64)
 
 /* Scientific functions */
 __DEC_FUNC_1_ALL(__INTF, dec64);
+__DEC_FUNC_2_ALL(__INTF, dec64);
 __INTF_DEC_FUNC_1(abs, dec64);
 
 /* String conversion */
 int dec64_set_str(dec64_t *result, const char *str);
 int dec64_get_str(const dec64_t *x, char *buf, size_t bufsize);
 
-void dec64_to_internal(const dec64_t *d, intern_dec64_t *out);
+void dec64_to_internal_dec64(const dec64_t *d, intern_dec64_t *out);
 void internal_to_dec64(const intern_dec64_t *in, dec64_t *d);
 void normalize_intern_dec64(intern_dec64_t *v);
 

@@ -24,10 +24,13 @@ typedef struct {
 
 void print_uint64(uint64_t n);
 
-#define print_bits_dec64 print_uint64
-#define bits_dec64_t     uint64_t
-#define UINT_dec64_MAX   UINT64_MAX
-#define bits_ddec64_t    __uint128_t
+#define print_bits_dec64       print_uint64
+#define bits_dec64_t           uint64_t
+#define bits_intern_dec64_t    uint64_t
+#define bits_ddec64_t          __uint128_t
+#define UINT_dec64_MAX         UINT64_MAX
+#define UINT_intern_dec64_MAX  UINT64_MAX
+#define intern_dec64_MAX_COEFF UINT64_MAX
 
 extern const char dec_sign[];
 
@@ -56,10 +59,6 @@ void normalize_coeff_exp_dec64(uint64_t *coeff, int *exponent);
 void normalize_intern_dec64(intern_dec64_t *v);
 
 /* Arithmetic operations */
-void intern_dec64_add(intern_dec64_t *result, const intern_dec64_t *a, const intern_dec64_t *b);
-void intern_dec64_sub(intern_dec64_t *result, const intern_dec64_t *a, const intern_dec64_t *b);
-void intern_dec64_mul(intern_dec64_t *result, const intern_dec64_t *a, const intern_dec64_t *b);
-void intern_dec64_div(intern_dec64_t *result, const intern_dec64_t *a, const intern_dec64_t *b);
 void intern_dec64_powi(intern_dec64_t *result, const intern_dec64_t *base, const int64_t exp);
 
 /* Aritmetic comparators */
@@ -75,6 +74,7 @@ __INTF_DEC_IS_UNORDERED(intern_dec64);
 
 /* Scientific functions */
 __DEC_FUNC_1_ALL(__INTF, intern_dec64);
+__DEC_FUNC_2_ALL(__INTF, intern_dec64);
 __INTF_DEC_FUNC_1(abs, intern_dec64);
 
 int intern_dec64_set_str(intern_dec64_t *out, const char *str);

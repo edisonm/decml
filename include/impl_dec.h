@@ -1,41 +1,41 @@
 #define __IMPL_DEC_FUNC_1(__func, __dec)                                \
     void __dec##_##__func(__dec##_t *result, const __dec##_t *a) {      \
         intern_##__dec##_t b, r;                                        \
-        __dec##_to_internal(a, &b);                                     \
+        __dec##_to_internal_##__dec(a, &b);                             \
         intern_##__dec##_##__func(&r, &b);                              \
         internal_to_##__dec(&r, result);                                \
     }
 
-#define __IMPL_DEC_FUNC2(__func, __dec)                                 \
+#define __IMPL_DEC_FUNC_2(__func, __dec)                                \
     void __dec##_##__func(__dec##_t *result, const __dec##_t *a, const __dec##_t *b) { \
         intern_##__dec##_t x, y, r;                                     \
-        __dec##_to_internal(a, &x);                                     \
-        __dec##_to_internal(b, &y);                                     \
+        __dec##_to_internal_##__dec(a, &x);                             \
+        __dec##_to_internal_##__dec(b, &y);                             \
         intern_##__dec##_##__func(&r, &x, &y);                          \
         internal_to_##__dec(&r, result);                                \
     }
 
 #define __IMPL_DEC_FUNC2i(__func, __dec)                                \
-    void __dec##_##__func(__dec##_t *result, const __dec##_t *a, int b) {    \
+    void __dec##_##__func(__dec##_t *result, const __dec##_t *a, int b) { \
         intern_##__dec##_t x, r;                                        \
-        __dec##_to_internal(a, &x);                                     \
+        __dec##_to_internal_##__dec(a, &x);                             \
         intern_##__dec##_##__func(&r, &x, b);                           \
         internal_to_##__dec(&r, result);                                \
     }
 
-#define __IMPL_DEC_FUNCi2(__func, __dec)                         \
-    int __dec##_##__func(const __dec##_t *a, const __dec##_t *b) \
-    {                                                            \
-        intern_##__dec##_t ia, ib;                               \
-        __dec##_to_internal(a, &ia);                             \
-        __dec##_to_internal(b, &ib);                             \
-        return intern_##__dec##_cmp(&ia, &ib);                   \
+#define __IMPL_DEC_FUNCi2(__func, __dec)                                \
+    int __dec##_##__func(const __dec##_t *a, const __dec##_t *b)        \
+    {                                                                   \
+        intern_##__dec##_t ia, ib;                                      \
+        __dec##_to_internal_##__dec(a, &ia);                            \
+        __dec##_to_internal_##__dec(b, &ib);                            \
+        return intern_##__dec##_cmp(&ia, &ib);                          \
     }
 
 /* Convert decimal BID to internal. See decXXX.h for bit extraction. */
-#define __IMPL_DEC_TO_INTERNAL(__dec)                                   \
-    void __dec##_to_internal(const __dec##_t *dec,                      \
-                             intern_##__dec##_t *out) {                 \
+#define __IMPL_DEC_TO_INTERNAL(__dec, __to)                             \
+    void __dec##_to_internal_##__to(const __dec##_t *dec,               \
+                                    intern_##__to##_t *out) {           \
         if (__dec##_is_nan(dec)) {                                      \
             out->special = DEC_NAN;                                     \
             out->sign = 0; out->coeff = 0;                              \

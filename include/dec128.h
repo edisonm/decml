@@ -154,10 +154,6 @@ static inline void dec128_set_inf(dec128_t *d, int sign) {
 }
 
 /* Arithmetic operations (with internal conversion for precision) */
-void dec128_add( dec128_t *result, const dec128_t *a, const dec128_t *b);
-void dec128_sub( dec128_t *result, const dec128_t *a, const dec128_t *b);
-void dec128_mul( dec128_t *result, const dec128_t *a, const dec128_t *b);
-void dec128_div( dec128_t *result, const dec128_t *a, const dec128_t *b);
 void dec128_powi(dec128_t *result, const dec128_t *a, int exp);
 
 // Comparator API (returns -1,0,1 or 2 as in internal)
@@ -173,13 +169,14 @@ __INTF_DEC_IS_UNORDERED(dec128)
 /* Scientific functions */
 __DEC_FUNC_1_ALL(__INTF, dec128);
 __INTF_DEC_FUNC_1(abs, dec128);
+__DEC_FUNC_2_ALL(__INTF, dec128);
 
 /* String conversion */
 int dec128_set_str(dec128_t *result, const char *str);
 int dec128_get_str(const dec128_t *x, char *buf, size_t bufsize);
 
 /* Conversion to/from internal representation */
-void dec128_to_internal(const dec128_t *d, intern_dec128_t *out);
+void dec128_to_internal_dec128(const dec128_t *d, intern_dec128_t *out);
 void internal_to_dec128(const intern_dec128_t *in, dec128_t *d);
 
 void normalize_intern_dec128(intern_dec128_t *v);

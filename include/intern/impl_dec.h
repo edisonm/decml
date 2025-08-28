@@ -28,3 +28,96 @@
         *coeff *= __pow10_##__dec[diff];                                \
         *exponent -= diff;                                              \
     }
+
+#define __IMPL_INTERN_DEC_floor(__dec)                          \
+    void intern_##__dec##_floor(intern_##__dec##_t *result,     \
+                                const intern_##__dec##_t *a) {  \
+        *result = *a;                                           \
+        if (!intern_##__dec##_is_finite(a)) return;              \
+        int e = a->exponent;                                    \
+        if (e >= 0) {                                           \
+            return; /* Already integral */                      \
+        }                                                       \
+                                                                \
+        int ne = -e;                                            \
+        bits_##__dec##_t intpart;                               \
+        bits_##__dec##_t remainder;                             \
+        if (ne > I_##__dec##_MAX_DIGITS) {                      \
+            intpart = 0;                                        \
+            remainder = a->coeff;                               \
+        } else {                                                \
+            intpart = a->coeff / __pow10_##__dec[ne];           \
+            remainder = a->coeff % __pow10_##__dec[ne];         \
+        }                                                       \
+                                                                \
+        if (a->sign == 0) {                                     \
+            /* positive: truncate */                            \
+            result->coeff = intpart;                            \
+            result->exponent = 0;                               \
+        } else {                                                \
+            /* negative: floor(-1.3) == -2 */                   \
+            if (remainder != 0) intpart += 1;                   \
+            result->coeff = intpart;                            \
+            result->exponent = 0;                               \
+        }                                                       \
+    }
+
+#define __IMPL_INTERN_DEC_ceil(__dec)                           \
+    void intern_##__dec##_ceil(intern_##__dec##_t *result,      \
+                               const intern_##__dec##_t *a) {   \
+        *result = *a;                                           \
+        if (!intern_##__dec##_is_finite(a)) return;             \
+        int e = a->exponent;                                    \
+        if (e >= 0) return;                                     \
+                                                                \
+        int ne = -e;                                            \
+        bits_##__dec##_t intpart;                               \
+        bits_##__dec##_t remainder;                             \
+        if (ne > I_##__dec##_MAX_DIGITS) {                      \
+            intpart = 0;                                        \
+            remainder = a->coeff;                               \
+        } else {                                                \
+            intpart = a->coeff / __pow10_##__dec[ne];           \
+            remainder = a->coeff % __pow10_##__dec[ne];         \
+        }                                                       \
+                                                                \
+        if (a->sign == 0) {                                     \
+            /* positive: round up if not exact */               \
+            if (remainder != 0) intpart += 1;                   \
+            result->coeff = intpart;                            \
+            result->exponent = 0;                               \
+        } else {                                                \
+            /* negative: just truncate */                       \
+            result->coeff = intpart;                            \
+            result->exponent = 0;                               \
+        }                                                       \
+    }
+
+#define __IMPL_INTERN_DEC_round(__dec)                          \
+    void intern_##__dec##_round(intern_##__dec##_t *result,     \
+                                const intern_##__dec##_t *a) {  \
+        *result = *a;                                           \
+        if (!intern_##__dec##_is_finite(a)) return;             \
+        int e = a->exponent;                                    \
+        if (e >= 0) return;                                     \
+                                                                \
+        int ne = -e;                                            \
+        bits_##__dec##_t intpart;                               \
+        bits_##__dec##_t remainder;                             \
+        bits_##__dec##_t threshold;                             \
+        if (ne > I_##__dec##_MAX_DIGITS) {                      \
+            intpart = 0;                                        \
+            remainder = a->coeff;                               \
+            threshold = UINT_##__dec##_MAX;                     \
+        } else {                                                \
+            intpart = a->coeff / __pow10_##__dec[ne];           \
+            remainder = a->coeff % __pow10_##__dec[ne];         \
+            threshold = __pow10_##__dec[ne] / 2;                \
+        }                                                       \
+                                                                \
+        if (remainder != 0) {                                   \
+            if (remainder >= threshold) intpart += 1;           \
+        }                                                       \
+        result->coeff = intpart;                                \
+        result->exponent = 0;                                   \
+    }

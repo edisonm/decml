@@ -3,7 +3,7 @@
 #include <string.h> // for memset
 #include <ctype.h>
 
-#define __IMPL_DEC_ABS(__dec)                                           \
+#define __IMPL_DEC_abs(__dec)                                           \
     void __dec##_abs(__dec##_t *result, const __dec##_t *a) {           \
         *result = *a;                                                   \
         /* If NaN or Inf, just clear sign bit (Inf stays Inf, NaN stays NaN) */ \

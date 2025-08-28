@@ -1,12 +1,12 @@
 MAKEFLAGS += --silent --no-print-directory
 CC = gcc
-CFLAGS = -I./include -Wall -Wextra -O2
+CFLAGS = -I./include -Wall -Wextra -O2 -fPIC
 LIBS = bin/libdec.a
 
-SRCS =  intern_dec.c gen_pow10m1_dec64_table.c \
-	dec64.c  intern_dec64_str.c  intern_dec64_arithmetic.c  intern_dec64.c \
+SRCS =  intern_dec.c gen_pow10m1_dec64_table.c dec64_dec128.c \
+	dec64.c  intern_dec64_str.c  intern_dec64_2.c  intern_dec64.c \
 	gen_pow10m1_dec128_table.c \
-	dec128.c intern_dec128_str.c intern_dec128_arithmetic.c intern_dec128.c
+	dec128.c intern_dec128_str.c intern_dec128_2.c intern_dec128.c
 
 .PRECIOUS: bin/gen_pow10m1_dec128_table.c
 

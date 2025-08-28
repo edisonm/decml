@@ -30,7 +30,7 @@
             (*val)++;                                                   \
     }
 
-#define __IMPL_INTERN_DEC_ADD(__dec)                                    \
+#define __IMPL_INTERN_DEC_add(__dec)                                    \
     void intern_##__dec##_add(intern_##__dec##_t *result, const intern_##__dec##_t *a, \
                               const intern_##__dec##_t *b) {            \
                                                                         \
@@ -169,7 +169,7 @@
         result->special = DEC_NORMAL;                                   \
     }
 
-#define __IMPL_INTERN_DEC_SUB(__dec)                            \
+#define __IMPL_INTERN_DEC_sub(__dec)                            \
     void intern_##__dec##_sub(intern_##__dec##_t *result,       \
                               const intern_##__dec##_t *a,      \
                               const intern_##__dec##_t *b) {    \
@@ -178,7 +178,7 @@
         intern_##__dec##_add(result, a, &neg_b);                \
     }
 
-#define __IMPL_INTERN_DEC_MUL(__dec)                                    \
+#define __IMPL_INTERN_DEC_mul(__dec)                                    \
     void intern_##__dec##_mul(intern_##__dec##_t *result,               \
                               const intern_##__dec##_t *a,              \
                               const intern_##__dec##_t *b) {            \
@@ -222,7 +222,7 @@
         result->special = DEC_NORMAL;                                   \
     }
 
-#define __IMPL_INTERN_DEC_DIV(__dec)                                    \
+#define __IMPL_INTERN_DEC_div(__dec)                                    \
     void intern_##__dec##_div(intern_##__dec##_t *result,               \
                               const intern_##__dec##_t *a,              \
                               const intern_##__dec##_t *b) {            \
@@ -335,7 +335,7 @@
         }                                                               \
     }
 
-#define __IMPL_INTERN_DEC_ABS(__dec)                                    \
+#define __IMPL_INTERN_DEC_abs(__dec)                                    \
     void intern_##__dec##_abs(intern_##__dec##_t *result,               \
                               const intern_##__dec##_t *value) {        \
         /* No effect for NaN/Inf, but safe to clear sign always */      \
@@ -343,4 +343,79 @@
         result->coeff = value->coeff;                                   \
         result->exponent = value->exponent;                             \
         result->special = value->special;                               \
+    }
+
+#define __IMPL_INTERN_DEC_pow(__dec)                                    \
+    void intern_##__dec##_pow(intern_##__dec##_t *result,               \
+                              const intern_##__dec##_t *a,              \
+                              const intern_##__dec##_t *b) {            \
+        intern_##__dec##_t y, z;                                        \
+        intern_##__dec##_log10(&y, a);                                  \
+        intern_##__dec##_mul(&z, &y, b);                                \
+        intern_##__dec##_exp10(result, &z);                             \
+    }
+
+#define __IMPL_INTERN_DEC_max(__dec)                                    \
+    void intern_##__dec##_max(intern_##__dec##_t *result,               \
+                              const intern_##__dec##_t *a,              \
+                              const intern_##__dec##_t *b) {            \
+        if (intern_##__dec##_greater(a, b)) {                           \
+            *result = *a;                                               \
+        } else {                                                        \
+            *result = *b;                                               \
+        }                                                               \
+    }
+
+#define __IMPL_INTERN_DEC_min(__dec)                                    \
+    void intern_##__dec##_min(intern_##__dec##_t *result,               \
+                              const intern_##__dec##_t *a,              \
+                              const intern_##__dec##_t *b) {            \
+        if (intern_##__dec##_less(a, b)) {                              \
+            *result = *a;                                               \
+        } else {                                                        \
+            *result = *b;                                               \
+        }                                                               \
+    }
+
+
+#define __IMPL_INTERN_DEC_mod(__dec)                                    \
+    void intern_##__dec##_mod(intern_##__dec##_t *result,               \
+                              const intern_##__dec##_t *a,              \
+                              const intern_##__dec##_t *b) {            \
+        /* Handle special cases (NaN, Inf, b == 0) */                   \
+        if (!intern_##__dec##_is_finite(a)                              \
+            || !intern_##__dec##_is_finite(b)                           \
+            || (b->coeff == 0 && b->special == DEC_NORMAL)) {           \
+            *result = intern_##__dec##_nan;                             \
+            return;                                                     \
+        }                                                               \
+        /* If a is zero or b is larger in magnitude than |a|, result = a */ \
+        intern_##__dec##_t abs_a, abs_b;                                \
+        intern_##__dec##_abs(&abs_a, a);                                \
+        intern_##__dec##_abs(&abs_b, b);                                \
+        if (a->coeff == 0 || intern_##__dec##_cmp(&abs_a, &abs_b) < 0) { \
+            *result = *a;                                               \
+            return;                                                     \
+        }                                                               \
+                                                                        \
+        /* n = trunc(a / b) */                                          \
+        intern_##__dec##_t n_real;                                      \
+        intern_##__dec##_div(&n_real, a, b);                            \
+        if (n_real.special != DEC_NORMAL) {                             \
+            *result = intern_##__dec##_nan;                             \
+            return;                                                     \
+        }                                                               \
+                                                                        \
+        /* Truncate toward zero */                                      \
+        intern_##__dec##_t n_val;                                       \
+        intern_##__dec##_round(&n_val, &n_real);                        \
+                                                                        \
+        /* n*b */                                                       \
+        intern_##__dec##_t nb;                                          \
+        intern_##__dec##_mul(&nb, &n_val, b);                           \
+        /* result = a - n*b */                                          \
+        intern_##__dec##_sub(result, a, &nb);                           \
+                                                                        \
+        /* Set correct sign for zero result */                          \
+        if (result->coeff == 0) result->sign = 0;                       \
     }

@@ -20,6 +20,6 @@
 #define __IMPL_DEC_GET_STR(__dec)                                       \
     int __dec##_get_str(const __dec##_t *d, char *buf, size_t bufsize) { \
         intern_##__dec##_t i;                                           \
-        __dec##_to_internal(d, &i);                                     \
+        __dec##_to_internal_##__dec(d, &i);                             \
         return intern_##__dec##_get_str(&i, buf, bufsize);              \
     }
