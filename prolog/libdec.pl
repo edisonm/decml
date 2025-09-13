@@ -59,24 +59,10 @@
 
 :- type [ dec64_t/1,
           dec128_t/1
-        ].
+        ] + native(prefix(is_)).
 
-dec64_t('$dec64'(V)) :-
-    int64(V).
-
-dec128_t('$dec128'(V1, V2)) :-
-    int64(V1),
-    int64(V2).
-
-:- pred [ dec64/2,
-          dec128/2
+:- pred [ dec64(+term, -term),
+          dec128(+term, -term)
         ] + native(prefix(pl_)).
 
 :- include(plbin(dec_auto)).
-
-user:portray('$dec64'(V)) :-
-    dec64_string('$dec64'(V), S),
-    format('"~s"', [S]).
-user:portray('$dec128'(V1,V2)) :-
-    dec128_string('$dec128'(V1,V2), S),
-    format('"~s"', [S]).

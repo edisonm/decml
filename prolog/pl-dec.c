@@ -6,37 +6,81 @@
 #include <stdio.h>
 #include <foreign_interface.h>
 
-/* #define dec64_to_dec64(  a, b) (*(b) = *(a)) */
-/* #define dec128_to_dec128(a, b) (*(b) = *(a)) */
+#define __IMPL_INTERN_DEC_OUT_STR(__type)                               \
+    int intern_dec##__type##_out_str(IOSTREAM *stream,                  \
+                                     const intern_dec##__type##_t *d) { \
+        char buf[__type/2];                                             \
+        if (intern_dec##__type##_get_str(d, buf, __type/2))             \
+            return FALSE;                                               \
+        if (Sfputs(buf, stream) == EOF)                                 \
+            return FALSE;                                               \
+        return TRUE;                                                    \
+    }
 
-#define __cast_to_internal_dec128(ref, v) ({                            \
-            if ((PL_new_atom("$dec64")==name)&&(arity==1)) {            \
-                dec64_t src;                                            \
-                term_t a = PL_new_term_ref();                           \
-                __rtcheck(PL_get_arg(1, v, a));                         \
-                __rtcheck(PL_get_int64(a, (int64_t *)&src));            \
-                dec64_to_internal_dec128(&src, &ref);                   \
-                break;                                                  \
-            }})
+#define __IMPL_DEC_OUT_STR(__dec)                                       \
+    int __dec##_out_str(IOSTREAM *stream, const __dec##_t *d) {         \
+        intern_##__dec##_t i;                                           \
+        __dec##_to_internal_##__dec(d, &i);                             \
+        return intern_##__dec##_out_str(stream, &i);                    \
+    }
 
-#define __cast_to_internal_dec64(ref, v) ({                             \
-            if ((PL_new_atom("$dec128")==name)&&(arity==2)) {           \
-                dec128_t src;                                           \
-                term_t a = PL_new_term_ref();                           \
-                term_t b = PL_new_term_ref();                           \
-                __rtcheck(PL_get_arg(1, v, a));                         \
-                __rtcheck(PL_get_arg(2, v, b));                         \
-                __rtcheck(PL_get_int64(a, 0+(int64_t *)&src));          \
-                __rtcheck(PL_get_int64(b, 1+(int64_t *)&src));          \
-                dec128_to_internal_dec64(&src, &ref);                   \
-                break;                                                  \
-            }})
+__IMPL_INTERN_DEC_OUT_STR(64)
+__IMPL_INTERN_DEC_OUT_STR(128)
+__IMPL_DEC_OUT_STR(dec64)
+__IMPL_DEC_OUT_STR(dec128)
 
-#define GEN_DEC_caster(__type, _)                                       \
+#define GEN_DEC_write_ref(__type)                               \
+    static int write_dec##__type##_ref(IOSTREAM *stream,        \
+                                       atom_t aref, int flags)  \
+    {                                                           \
+        dec##__type##_t *ref = PL_blob_data(aref, NULL, NULL);  \
+        return dec##__type##_out_str(stream, ref);              \
+    }
+
+#define GEN_DEC_release(__type)                                 \
+    static int release_dec##__type(atom_t aref)                 \
+    {                                                           \
+        dec##__type##_t *ref = PL_blob_data(aref, NULL, NULL);  \
+        PL_free(ref);                                           \
+        return TRUE;                                            \
+    }
+
+#define GEN_DEC_aquire(__type)                                  \
+    static void aquire_dec##__type(atom_t aref)                 \
+    {                                                           \
+        dec##__type##_t *ref = PL_blob_data(aref, NULL, NULL);  \
+        (void) ref;                                             \
+    }
+
+#define GEN_DEC___record(__type)                \
+    static PL_blob_t __record_dec##__type##_t = \
+    {                                           \
+        PL_BLOB_MAGIC,                          \
+        PL_BLOB_NOCOPY,                         \
+        "dec"#__type,                           \
+        release_dec##__type,                    \
+        NULL,                                   \
+        write_dec##__type##_ref,                \
+        aquire_dec##__type                      \
+    };
+
+#define GEN_DEC_record(__type)                                  \
+    PL_blob_t *record_dec##__type##_t = &__record_dec##__type##_t;
+
+#define GEN_DEC_is(__type)                                       \
+    foreign_t is_dec##__type##_t(term_t v) {                     \
+        void *src;                                               \
+        PL_blob_t *type;                                         \
+        return PL_get_blob(v, (void *)&src, NULL, &type)         \
+            && type == record_dec##__type##_t;                   \
+    }
+
+#define GEN_DEC_caster(__type)                                          \
     foreign_t pl_dec##__type(term_t v, term_t t) {                      \
         intern_dec##__type##_t ref;                                     \
         switch (PL_term_type(v)) {                                      \
         case PL_VARIABLE:                                               \
+            ref = intern_dec##__type##_zero;                            \
             break;                                                      \
         case PL_INTEGER:                                                \
         {                                                               \
@@ -70,74 +114,72 @@
             if (intern_dec##__type##_set_str(&ref, c)!=0) return FALSE; \
             break;                                                      \
         }                                                               \
-        case PL_TERM:                                                   \
-        {   atom_t name;                                                \
-            size_t arity;                                               \
-            __rtcheck(PL_get_name_arity(v, &name, &arity));             \
-            if ((PL_new_atom("$dec"#__type)==name)&&(arity==__type/64)) { \
+        case PL_BLOB:                                                   \
+        {   PL_blob_t *type;                                            \
+            if (is_dec##__type##_t(v)) {                                \
                 return PL_unify(t, v);                                  \
-            } else {                                                    \
-                __cast_to_internal_dec##__type(ref, v);                 \
-            }                                                           \
-            return FALSE;                                               \
+            } else                                                      \
+                return FALSE;                                           \
         }                                                               \
         default:                                                        \
             return FALSE;                                               \
         }                                                               \
-        dec##__type##_t res;                                            \
-        internal_to_dec##__type(&ref, &res);                            \
-        return FI_unify_dec##__type##_t(t, &res);                       \
+        dec##__type##_t *res = PL_malloc(sizeof(dec##__type##_t));      \
+        internal_to_dec##__type(&ref, res);                             \
+        return FI_unify_dec##__type##_t(t, res);                        \
     }
 
 #define GEN_DEC_pl_2(__type, __func)                                    \
     foreign_t pl_dec##__type##_##__func(term_t res, term_t x) {         \
-        dec##__type##_t a;                                              \
-        dec##__type##_t b;                                              \
+        dec##__type##_t *a;                                             \
         if (PL_get_dec##__type##_t(x, &a)) {                            \
-            dec##__type##_##__func(&b, &a);                             \
-            return FI_unify_dec##__type##_t(res, &b);                   \
+            dec##__type##_t *b = PL_malloc(sizeof(dec##__type##_t));    \
+            dec##__type##_##__func(b, a);                               \
+            return FI_unify_dec##__type##_t(res, b);                    \
         }                                                               \
         return FALSE;                                                   \
     }
 
 #define GEN_DEC_pl_3(__type, __func)                                    \
     foreign_t pl_dec##__type##_##__func(term_t res, term_t x, term_t y) { \
-        dec##__type##_t a, b, c;                                        \
+        dec##__type##_t *a, *b;                                         \
         if (FI_get_dec##__type##_t(NULL, x, &a)                         \
             && FI_get_dec##__type##_t(NULL, y, &b)) {                   \
-            dec##__type##_##__func(&c, &a, &b);                         \
-            return FI_unify_dec##__type##_t(res, &c);                   \
+            dec##__type##_t *c = PL_malloc(sizeof(dec##__type##_t));    \
+            dec##__type##_##__func(c, a, b);                            \
+            return FI_unify_dec##__type##_t(res, c);                    \
         }                                                               \
         return FALSE;                                                   \
     }
 
 #define GEN_DEC_pn_3(__type, __func)                                    \
     foreign_t pn_dec##__type##_##__func(term_t res, term_t x, term_t y) { \
-        dec##__type##_t a, b, c;                                          \
+        dec##__type##_t *a, *b;                                         \
         if (FI_get_dec##__type##_t(NULL, x, &a)                         \
             && FI_get_dec##__type##_t(NULL, y, &b)) {                   \
-            dec##__type##_##__func(&c, &a, &b);                         \
-            return FI_unify_dec##__type##_t(res, &c);                   \
+            dec##__type##_t *c = PL_malloc(sizeof(dec##__type##_t));    \
+            dec##__type##_##__func(c, a, b);                            \
+            return FI_unify_dec##__type##_t(res, c);                    \
         }                                                               \
         return FALSE;                                                   \
     }
 
 #define GEN_DEC_is_2(__type, __func)                                    \
     foreign_t is_dec##__type##_##__func(term_t x, term_t y) {           \
-        dec##__type##_t a, b;                                           \
+        dec##__type##_t *a, *b;                                         \
         if (FI_get_dec##__type##_t(NULL, x, &a)                         \
             && FI_get_dec##__type##_t(NULL, y, &b)) {                   \
-            return dec##__type##_##__func(&a, &b);                      \
+            return dec##__type##_##__func(a, b);                        \
         }                                                               \
         return FALSE;                                                   \
     }
 
 #define GEN_DEC_pi_2(__type, __func)                                    \
     foreign_t pi_dec##__type##_##__func(term_t res, term_t x) {         \
-        dec##__type##_t a;                                              \
-        DEC_SINT64 b;                                                   \
+        dec##__type##_t *a;                                             \
         if (FI_get_dec##__type##_t(NULL, x, &a)) {                      \
-            dec##__type##_to_int64_##__func(&b, &a);                    \
+            DEC_SINT64 b;                                               \
+            dec##__type##_to_int64_##__func(&b, a);                     \
             return PL_unify_int64(res, (int64_t)b);                     \
         }                                                               \
         return FALSE;                                                   \
@@ -146,77 +188,44 @@
 #define GEN_DEC_pt_2(__type, __func)                                    \
     foreign_t pt_dec##__type##_##__func(term_t t, term_t r) {           \
         char s[__type/2];                                               \
-        dec##__type##_t v;                                              \
+        dec##__type##_t *v;                                             \
         __rtcheck(PL_get_dec##__type##_t(t, &v));                       \
-        dec##__type##_get_str(&v, s, __type/2);                         \
+        dec##__type##_get_str(v, s, __type/2);                          \
         __rtcheck(PL_unify_##__func##_chars(r, s));                     \
         return TRUE;                                                    \
     }
 
-int FI_unify_dec64_t(term_t t, dec64_t * const v)
-{
-    dec64_t src;
-    switch (PL_term_type(t)) {
-    case PL_VARIABLE:
-        return PL_unify_term(t,
-                             PL_FUNCTOR_CHARS,
-                             "$dec64", 1,
-                             PL_INT64,
-                             *v);
-    case PL_TERM:
-        return PL_get_dec64_t(t, &src)
-            && (src.bits == v->bits);
+#define GEN_DEC_pl_unify(__type)                                        \
+    int PL_unify_dec##__type##_t(term_t t, dec##__type##_t *fr) {       \
+        return PL_unify_blob(t, fr, sizeof(dec##__type##_t),            \
+                             record_dec##__type##_t);                   \
     }
-    return FALSE;
-}
 
-int FI_unify_dec128_t(term_t t, dec128_t * const v)
-{
-    dec128_t src;
-    const __uint128_t MASK_64 = (__uint128_t)0xFFFFFFFFFFFFFFFFULL;
-    switch (PL_term_type(t)) {
-    case PL_VARIABLE:
-        return PL_unify_term(t,
-                             PL_FUNCTOR_CHARS,
-                             "$dec128", 2,
-                             PL_INT64,
-                             (uint64_t)(v->bits & MASK_64),
-                             PL_INT64,
-                             (uint64_t)(v->bits >> 64));
-    case PL_TERM:
-        return PL_get_dec128_t(t, &src)
-            && (src.bits == v->bits);
+#define GEN_DEC_pl_get(__type)                                          \
+    int PL_get_dec##__type##_t(term_t t, dec##__type##_t **v) {         \
+        PL_blob_t *type;                                                \
+        if (PL_get_blob(t, (void **)v, NULL, &type)                     \
+            && type == record_dec##__type##_t)                          \
+            return TRUE;                                                \
+        return FALSE;                                                   \
     }
-    return FALSE;
-}
-
-int PL_get_dec64_t(term_t t, dec64_t *v) {
-    atom_t name;
-    size_t arity;
-    term_t a = PL_new_term_ref();
-    return PL_get_name_arity(t, &name, &arity)
-        && (arity == 1) && (PL_new_atom("$dec64")==name)
-        && PL_get_arg(1, t, a) && PL_get_int64(a, (int64_t *)&(v->bits));
-}
-
-int PL_get_dec128_t(term_t t, dec128_t *v) {
-    atom_t name;
-    size_t arity;
-    term_t a = PL_new_term_ref();
-    term_t b = PL_new_term_ref();
-    int64_t w[2];
-    int result = PL_get_name_arity(t, &name, &arity)
-        && (arity == 2) && (PL_new_atom("$dec128")==name)
-        && PL_get_arg(1, t, a) && PL_get_int64(a, (int64_t *)&(w[0]))
-        && PL_get_arg(2, t, b) && PL_get_int64(b, (int64_t *)&(w[1]));
-    v->bits = w[0] + ((__uint128_t)w[1] << 64);
-    return result;
-}
 
 #define GEN_DEC_ALL(__pre, __func) \
-    GEN_DEC_##__pre( 64, __func) \
+    GEN_DEC_##__pre( 64, __func)   \
     GEN_DEC_##__pre(128, __func)
 
-GEN_DEC_ALL(caster, _)
+#define GEN_DEC_ALL_1(__pre) \
+    GEN_DEC_##__pre( 64)     \
+    GEN_DEC_##__pre(128)
+
+GEN_DEC_ALL_1(caster)
+GEN_DEC_ALL_1(write_ref)
+GEN_DEC_ALL_1(release)
+GEN_DEC_ALL_1(aquire)
+GEN_DEC_ALL_1(__record)
+GEN_DEC_ALL_1(record)
+GEN_DEC_ALL_1(is)
+GEN_DEC_ALL_1(pl_unify)
+GEN_DEC_ALL_1(pl_get)
 
 #include "pl-dec_auto.h"

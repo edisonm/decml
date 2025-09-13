@@ -1,4 +1,5 @@
 /* internal/dec128.h - Header for internal decimal128 arithmetic */
+
 #ifndef INTERN_DEC128_H
 #define INTERN_DEC128_H
 

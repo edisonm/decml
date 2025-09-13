@@ -34,7 +34,8 @@
 
 :- module(dec_desc, [dec_desc/3]).
 
-dec_desc(pl_, [ acos,
+dec_desc(pl_, [ abs,
+                acos,
                 % acosh,
                 asin,
                 % asinh,

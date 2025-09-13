@@ -113,15 +113,6 @@ do_eval(sign(X), Type, C) :-
 do_eval(eval(Expr), Type, C) :- eval(Type, Expr, C).
 do_eval(+(Expr), Type, C) :- eval(Type, Expr, C).
 do_eval(-(Expr), Type, C) :- do_eval(0-Expr, Type, C).
-/*
-do_eval(abs(Expr), Type, C) :-
-    eval(Type, Expr, V),
-    do_eval_z_(Type, Z),
-    ( compare_b(>, Type, Z, V)
-    ->do_eval(-V, Type, C)
-    ; C = V
-    ).
-*/
 do_eval(Expr, Type, C) :-
     expr_pred(Expr, Pred),
     Pred =.. [Name|Args],
