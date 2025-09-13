@@ -49,8 +49,8 @@ cd_prefix(Type, Type, []) :-
     cd_type(Type),
     neck.
 
-int(dec64,  A, B) :- dec64_int( A, B).
-int(dec128, A, B) :- dec128_int(A, B).
+int(dec64,  A, B) :- dec64_round( A, B).
+int(dec128, A, B) :- dec128_round(A, B).
 
 op_pred(=,  equal).
 op_pred(=<, lessequal).
@@ -84,7 +84,6 @@ expr_pred(Pred, Pred) :-
     member(F, FL),
     succ(A, A1),
     functor(Pred, F, A),
-    \+ expr_pred(_, Pred),
     \+ expr_pred(Pred, _),
     neck.
 
@@ -114,6 +113,7 @@ do_eval(sign(X), Type, C) :-
 do_eval(eval(Expr), Type, C) :- eval(Type, Expr, C).
 do_eval(+(Expr), Type, C) :- eval(Type, Expr, C).
 do_eval(-(Expr), Type, C) :- do_eval(0-Expr, Type, C).
+/*
 do_eval(abs(Expr), Type, C) :-
     eval(Type, Expr, V),
     do_eval_z_(Type, Z),
@@ -121,6 +121,7 @@ do_eval(abs(Expr), Type, C) :-
     ->do_eval(-V, Type, C)
     ; C = V
     ).
+*/
 do_eval(Expr, Type, C) :-
     expr_pred(Expr, Pred),
     Pred =.. [Name|Args],
@@ -131,31 +132,32 @@ do_eval(Expr, Type, C) :-
     EvalS,
     AC.
 
-do_eval_z_(Type, C) :-
-    cd_type(Type),
-    do_eval_z(Type, C),
-    neck.
+% table required, specially for epsilon, otherwise it will take 300 times
+% more!!!
+
+:- table
+    do_eval_1/2,
+    do_eval_m1/2,
+    do_eval_e/2,
+    do_eval_pi/2,
+    do_eval_epsilon/2.
 
 do_eval_1(Type, C) :-
     cd_type(Type),
-    cast(Type, 1, C),
-    neck.
+    cast(Type, 1, C).
 
 do_eval_m1(Type, C) :-
     cd_type(Type),
-    cast(Type, -1, C),
-    neck.
+    cast(Type, -1, C).
 
 do_eval_e(Type, C) :-
     cd_type(Type),
     do_eval_1(Type, F1),
-    exp(Type, C, F1),
-    neck.
+    exp(Type, C, F1).
 
 do_eval_pi(Type, C) :-
     cd_type(Type),
-    do_eval(4*atan(1), Type, C),
-    neck.
+    do_eval(4*atan(1), Type, C).
 
 do_eval_epsilon(Type, E) :-
     cd_type(Type),
@@ -165,5 +167,4 @@ do_eval_epsilon(Type, E) :-
            do_eval(P^X, Type, E),
            do_eval(O+E, Type, Y),
            compare_b(=, Type, Y, O)
-         )),
-    neck.
+         )).
