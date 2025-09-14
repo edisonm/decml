@@ -11,6 +11,7 @@
 #include "intern/impl_dec_acos.h"
 #include "intern/impl_dec_log10.h"
 #include "intern/impl_dec_exp10m1.h"
+#include "intern/impl_dec_arithmetic.h"
 
 __IMPL_CONST_INTERN_DEC(dec64, pi,       0, 3141592653589793238ULL, -I_dec64_MAX_DIGITS+1, DEC_NORMAL);
 __IMPL_CONST_INTERN_DEC(dec64, log2_10,  0, 3321928094887362348ULL, -I_dec64_MAX_DIGITS+1, DEC_NORMAL);
@@ -22,6 +23,18 @@ void print_uint64(uint64_t n) {
     printf("%" PRIu64, n);
 }
 
+static inline uint64_t hi_ddec64(__uint128_t *x) {return (uint64_t)(*x >> 64);}
+static inline uint64_t lo_ddec64(__uint128_t *x) {return (uint64_t)*x;}
+static inline void mul_bits_dec64_ddec64(uint64_t a, uint64_t b, __uint128_t *x) {*x = (__uint128_t)a * b;}
+
+static inline void div_bits_ddec64_dec64(const __uint128_t *numerator,
+                                         const uint64_t denominator,
+                                         __uint128_t *quotient,
+                                         uint64_t *remainder) {
+    if (quotient) *quotient = *numerator / denominator;
+    if (remainder) *remainder = (uint64_t)(*numerator % denominator);
+}
+
 __IMPL_CONST_INTERN_DECS(dec64)
 __IMPL_NORMALIZE_COEFF_EXP_DEC(dec64)
 __IMPL_NORMALIZE_INTERN_DEC(dec64)
@@ -30,5 +43,11 @@ __IMPL_DEC_COMPARE(dec64)
 __IMPL_INTERN_DEC_MOD_2PI(dec64)
 __INTF_INTERN_DEC_EXP10M1_REC(dec64);
 __IMPL_INTERN_DEC_EXP10M1_REC(dec64)
+__IMPL_DEC_BITS_DIV_POW10_ROUND_UP(dec64)
 
 __DEC_FUNC_1_ALL(__IMPL_INTERN, dec64)
+__DEC_FUNC_2_ALL(__IMPL_INTERN, dec64)
+
+/* __IMPL_DEC_BITS_DIV_POW10_ROUND(dec64) */
+__IMPL_INTERN_DEC_POWI(dec64)
+__IMPL_INTERN_DEC_abs( dec64)

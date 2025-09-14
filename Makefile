@@ -4,9 +4,9 @@ CFLAGS = -I./include -Wall -Wextra -O2 -fPIC
 LIBS = bin/libdec.a
 
 SRCS =  intern_dec.c gen_pow10m1_dec64_table.c dec64_dec128.c \
-	dec64.c  intern_dec64_str.c  intern_dec64_2.c  intern_dec64.c \
+	dec64.c  intern_dec64_str.c intern_dec64.c \
 	gen_pow10m1_dec128_table.c \
-	dec128.c intern_dec128_str.c intern_dec128_2.c intern_dec128.c
+	dec128.c intern_dec128_str.c intern_dec128.c
 
 .PRECIOUS: bin/gen_pow10m1_dec128_table.c
 
@@ -19,7 +19,10 @@ TESTS= \
 	test_dec64_str \
 	test_dec128_str
 
-all: bin/libdec.a
+bin:
+	mkdir -p bin
+
+all: bin bin/libdec.a
 
 bin/libdec.a: $(addprefix bin/,$(OBJS))
 	ar rcs $@ $^

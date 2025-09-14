@@ -61,7 +61,7 @@ dec_desc(pl_, [ abs,
                 % tgamma
               ], 2).
 dec_desc(pl_, [ add,
-                % atan2,
+                atan2,
                 div,
                 % fdim, hypot,
                 mul,

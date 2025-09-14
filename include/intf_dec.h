@@ -70,6 +70,7 @@
     __pref##_DEC_FUNC_2(pow,     __dec);        \
     __pref##_DEC_FUNC_2(min,     __dec);        \
     __pref##_DEC_FUNC_2(max,     __dec);        \
+    __pref##_DEC_FUNC_2(atan2,   __dec);        \
     __pref##_DEC_FUNC_2(mod,     __dec);
 
 #define __DEC_FUNC_2i_ALL(__pref, __dec)        \

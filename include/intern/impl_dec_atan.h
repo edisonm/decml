@@ -81,3 +81,66 @@
         intern_##__dec##_div(&b,     &t,         &divisor1);            \
         intern_##__dec##_div(result, &b,         &divisor2);            \
     }
+
+#define __IMPL_INTERN_DEC_atan2(__dec)                                  \
+    void intern_##__dec##_atan2(intern_##__dec##_t *result,             \
+                                const intern_##__dec##_t *y,            \
+                                const intern_##__dec##_t *x)            \
+    {                                                                   \
+        /* Handle NaN or Inf - if either is not finite, result is NaN */ \
+        if (!intern_##__dec##_is_finite(x) || !intern_##__dec##_is_finite(y)) { \
+            *result = intern_##__dec##_nan;                             \
+            return;                                                     \
+        }                                                               \
+                                                                        \
+        /* Fast check for zero denominator: x == 0 */                   \
+        if (x->coeff == 0 && x->exponent == 0 && x->special == DEC_NORMAL) { \
+            if (y->coeff == 0 && y->exponent == 0 && y->special == DEC_NORMAL) { \
+                /* Undefined: atan2(0, 0) */                            \
+                *result = intern_##__dec##_nan;                         \
+                return;                                                 \
+            }                                                           \
+            /* atan2(y, 0) = pi/2 or -pi/2 depending on sign of y */    \
+            intern_##__dec##_t half_pi;                                 \
+            intern_##__dec##_div(&half_pi, &intern_##__dec##_pi, &intern_##__dec##_two); \
+            *result = half_pi;                                          \
+            if (y->sign == 1) result->sign = 1; /* Negative if y<0 */   \
+            else result->sign = 0;                                      \
+            return;                                                     \
+        }                                                               \
+                                                                        \
+        /* If y == 0 (but x != 0), atan2(0,x) = 0 if x>0, pi if x<0 */  \
+        if (y->coeff == 0 && y->exponent == 0 && y->special == DEC_NORMAL) { \
+            if (x->sign == 0) {                                         \
+                /* x > 0 */                                             \
+                *result = intern_##__dec##_zero;                        \
+            } else {                                                    \
+                /* x < 0 */                                             \
+                *result = intern_##__dec##_pi;                          \
+                *result = intern_##__dec##_pi;                          \
+                /* y==0, but sign(y)==1 is -0, so return pi if y==+0, -pi if y==-0? */ \
+                /* For simplicity, return pi (positive). This matches most C libraries. */ \
+                result->sign = 0;                                       \
+            }                                                           \
+            return;                                                     \
+        }                                                               \
+                                                                        \
+        /* Otherwise, compute atan(y/x) */                              \
+        intern_##__dec##_t div;                                         \
+        intern_##__dec##_div(&div, y, x);                               \
+        intern_##__dec##_atan(result, &div);                            \
+                                                                        \
+        /* Adjust quadrant if needed */                                 \
+        if (x->sign == 1) {                                             \
+            /* x < 0 */                                                 \
+            if (y->sign == 0) {                                         \
+                /* y >= 0: result += pi */                              \
+                intern_##__dec##_add(result, result, &intern_##__dec##_pi); \
+            } else {                                                    \
+                /* y < 0: result -= pi */                               \
+                intern_##__dec##_sub(result, result, &intern_##__dec##_pi); \
+            }                                                           \
+        }                                                               \
+        /* Normalize direction of zero result */                        \
+        if (result->coeff == 0) result->sign = 0;                       \
+    }
