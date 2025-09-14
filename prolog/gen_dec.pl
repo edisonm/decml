@@ -33,36 +33,40 @@
 */
 
 :- module(gen_dec,
-          [ gen_dec/0
+          [ gen/1
           ]).
 
 :- use_module(library(filesex)).
 :- use_module(library(lists)).
 :- use_module(library(assertions)).
-:- use_module(library(dec_desc)).
 :- init_expansors.
 
-gen_dec :-
+:- multifile prefix_type/3.
+:- multifile desc/4.
+
+gen(Dec) :-
     absolute_file_name(plbin('.'), Dir, [file_type(directory), access(exist)]),
-    gen_dec_pl(Dir),
-    gen_dec_h(Dir).
+    gen_pl(Dec, Dir),
+    gen_h(Dec, Dir).
 
-gen_dec_pl(Dir) :-
-    directory_file_path(Dir, 'dec_auto.pl', File),
+gen_pl(Dec, Dir) :-
+    atom_concat(Dec, '_auto.pl', Name),
+    directory_file_path(Dir, Name, File),
     tell(File),
-    dump_dec_pl,
+    dump_pl(Dec),
     told.
 
-gen_dec_h(Dir) :-
-    directory_file_path(Dir, 'pl-dec_auto.h', File),
+gen_h(Dec, Dir) :-
+    format(atom(Name), "pl-~w_auto.h", [Dec]),
+    directory_file_path(Dir, Name, File),
     tell(File),
-    dump_dec_h,
+    dump_h(Dec),
     told.
 
-dump_dec_h :-
-    ( dec_desc(Prefix, FL, A),
+dump_h(Dec) :-
+    ( desc(Dec, Prefix, FL, A),
       member(F, FL),
-      format("GEN_DEC_ALL(~w~w,~w)~n", [Prefix, A, F]),
+      format("GEN_~w_ALL(~w~w,~w)~n", [Dec, Prefix, A, F]),
       fail
     ; true
     ).
@@ -79,9 +83,9 @@ compats(pt_, 2, T, +T * -).
 compats(pi_, 2, T, -int* +T).
 compats(is_, 2, T, +T* +T).
 
-dump_dec_pl :-
-    ( member(Pre-T, [dec64-dec64_t, dec128-dec128_t]),
-      dec_desc(Prefix, FL, A),
+dump_pl(Dec) :-
+    ( prefix_type(Dec, Pre, T),
+      desc(Dec, Prefix, FL, A),
       compats(Prefix, A, T, Cs),
       findall(Func/A,
               ( member(F, FL),

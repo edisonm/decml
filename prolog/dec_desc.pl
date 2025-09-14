@@ -34,6 +34,12 @@
 
 :- module(dec_desc, [dec_desc/3]).
 
+:- use_module(library(lists)).
+:- reexport(library(gen_dec)).
+
+gen_dec:prefix_type(dec, Pre, T) :- member(Pre-T, [dec64-dec64_t, dec128-dec128_t]).
+gen_dec:desc(dec, Prefix, FL, A) :- dec_desc(Prefix, FL, A).
+
 dec_desc(pl_, [ abs,
                 acos,
                 % acosh,

@@ -52,8 +52,8 @@
 :- use_foreign_header('pl-dec').
 :- use_foreign_source('pl-dec').
 :- gen_foreign_library(plbin(libdec)).
-:- use_module(library(gen_dec)).
-:- gen_dec.
+:- use_module(library(dec_desc)).
+:- gen(dec).
 
 :- type [ dec64_t/1,
           dec128_t/1

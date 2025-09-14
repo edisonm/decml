@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <foreign_interface.h>
 
-#define __IMPL_INTERN_DEC_OUT_STR(__type)                               \
+#define __IMPL_INTERN_dec_OUT_STR(__type)                               \
     int intern_dec##__type##_out_str(IOSTREAM *stream,                  \
                                      const intern_dec##__type##_t *d) { \
         char s[__type/2];                                               \
@@ -17,19 +17,19 @@
         return TRUE;                                                    \
     }
 
-#define __IMPL_DEC_OUT_STR(__dec)                                       \
+#define __IMPL_dec_OUT_STR(__dec)                                       \
     int __dec##_out_str(IOSTREAM *stream, const __dec##_t *d) {         \
         intern_##__dec##_t i;                                           \
         __dec##_to_internal_##__dec(d, &i);                             \
         return intern_##__dec##_out_str(stream, &i);                    \
     }
 
-__IMPL_INTERN_DEC_OUT_STR(64)
-__IMPL_INTERN_DEC_OUT_STR(128)
-__IMPL_DEC_OUT_STR(dec64)
-__IMPL_DEC_OUT_STR(dec128)
+__IMPL_INTERN_dec_OUT_STR(64)
+__IMPL_INTERN_dec_OUT_STR(128)
+__IMPL_dec_OUT_STR(dec64)
+__IMPL_dec_OUT_STR(dec128)
 
-#define GEN_DEC_write_ref(__type)                               \
+#define GEN_dec_write_ref(__type)                               \
     static int write_dec##__type##_ref(IOSTREAM *stream,        \
                                        atom_t aref, int flags)  \
     {                                                           \
@@ -37,7 +37,7 @@ __IMPL_DEC_OUT_STR(dec128)
         return dec##__type##_out_str(stream, ref);              \
     }
 
-#define GEN_DEC_release(__type)                                 \
+#define GEN_dec_release(__type)                                 \
     static int release_dec##__type(atom_t aref)                 \
     {                                                           \
         dec##__type##_t *ref = PL_blob_data(aref, NULL, NULL);  \
@@ -45,14 +45,14 @@ __IMPL_DEC_OUT_STR(dec128)
         return TRUE;                                            \
     }
 
-#define GEN_DEC_aquire(__type)                                  \
+#define GEN_dec_aquire(__type)                                  \
     static void aquire_dec##__type(atom_t aref)                 \
     {                                                           \
         dec##__type##_t *ref = PL_blob_data(aref, NULL, NULL);  \
         (void) ref;                                             \
     }
 
-#define GEN_DEC___record(__type)                \
+#define GEN_dec___record(__type)                \
     static PL_blob_t __record_dec##__type##_t = \
     {                                           \
         PL_BLOB_MAGIC,                          \
@@ -64,10 +64,10 @@ __IMPL_DEC_OUT_STR(dec128)
         aquire_dec##__type                      \
     };
 
-#define GEN_DEC_record(__type)                                  \
+#define GEN_dec_record(__type)                                  \
     PL_blob_t *record_dec##__type##_t = &__record_dec##__type##_t;
 
-#define GEN_DEC_is(__type)                                       \
+#define GEN_dec_is(__type)                                       \
     foreign_t is_dec##__type##_t(term_t v) {                     \
         void *src;                                               \
         PL_blob_t *type;                                         \
@@ -75,7 +75,7 @@ __IMPL_DEC_OUT_STR(dec128)
             && type == record_dec##__type##_t;                   \
     }
 
-#define GEN_DEC_caster(__type)                                          \
+#define GEN_dec_caster(__type)                                          \
     foreign_t pl_dec##__type(term_t v, term_t t) {                      \
         intern_dec##__type##_t ref;                                     \
         switch (PL_term_type(v)) {                                      \
@@ -129,7 +129,7 @@ __IMPL_DEC_OUT_STR(dec128)
         return FI_unify_dec##__type##_t(t, res);                        \
     }
 
-#define GEN_DEC_pl_2(__type, __func)                                    \
+#define GEN_dec_pl_2(__type, __func)                                    \
     foreign_t pl_dec##__type##_##__func(term_t res, term_t x) {         \
         dec##__type##_t *a;                                             \
         if (PL_get_dec##__type##_t(x, &a)) {                            \
@@ -140,7 +140,7 @@ __IMPL_DEC_OUT_STR(dec128)
         return FALSE;                                                   \
     }
 
-#define GEN_DEC_pl_3(__type, __func)                                    \
+#define GEN_dec_pl_3(__type, __func)                                    \
     foreign_t pl_dec##__type##_##__func(term_t res, term_t x, term_t y) { \
         dec##__type##_t *a, *b;                                         \
         if (FI_get_dec##__type##_t(NULL, x, &a)                         \
@@ -152,7 +152,7 @@ __IMPL_DEC_OUT_STR(dec128)
         return FALSE;                                                   \
     }
 
-#define GEN_DEC_pn_3(__type, __func)                                    \
+#define GEN_dec_pn_3(__type, __func)                                    \
     foreign_t pn_dec##__type##_##__func(term_t res, term_t x, term_t y) { \
         dec##__type##_t *a, *b;                                         \
         if (FI_get_dec##__type##_t(NULL, x, &a)                         \
@@ -164,7 +164,7 @@ __IMPL_DEC_OUT_STR(dec128)
         return FALSE;                                                   \
     }
 
-#define GEN_DEC_is_2(__type, __func)                                    \
+#define GEN_dec_is_2(__type, __func)                                    \
     foreign_t is_dec##__type##_##__func(term_t x, term_t y) {           \
         dec##__type##_t *a, *b;                                         \
         if (FI_get_dec##__type##_t(NULL, x, &a)                         \
@@ -174,7 +174,7 @@ __IMPL_DEC_OUT_STR(dec128)
         return FALSE;                                                   \
     }
 
-#define GEN_DEC_pi_2(__type, __func)                                    \
+#define GEN_dec_pi_2(__type, __func)                                    \
     foreign_t pi_dec##__type##_##__func(term_t res, term_t x) {         \
         dec##__type##_t *a;                                             \
         if (FI_get_dec##__type##_t(NULL, x, &a)) {                      \
@@ -185,7 +185,7 @@ __IMPL_DEC_OUT_STR(dec128)
         return FALSE;                                                   \
     }
 
-#define GEN_DEC_pt_2(__type, __func)                                    \
+#define GEN_dec_pt_2(__type, __func)                                    \
     foreign_t pt_dec##__type##_##__func(term_t t, term_t r) {           \
         char s[__type/2];                                               \
         dec##__type##_t *v;                                             \
@@ -195,13 +195,13 @@ __IMPL_DEC_OUT_STR(dec128)
         return TRUE;                                                    \
     }
 
-#define GEN_DEC_pl_unify(__type)                                        \
+#define GEN_dec_pl_unify(__type)                                        \
     int PL_unify_dec##__type##_t(term_t t, dec##__type##_t *fr) {       \
         return PL_unify_blob(t, fr, sizeof(dec##__type##_t),            \
                              record_dec##__type##_t);                   \
     }
 
-#define GEN_DEC_pl_get(__type)                                          \
+#define GEN_dec_pl_get(__type)                                          \
     int PL_get_dec##__type##_t(term_t t, dec##__type##_t **v) {         \
         PL_blob_t *type;                                                \
         if (PL_get_blob(t, (void **)v, NULL, &type)                     \
@@ -210,22 +210,22 @@ __IMPL_DEC_OUT_STR(dec128)
         return FALSE;                                                   \
     }
 
-#define GEN_DEC_ALL(__pre, __func) \
-    GEN_DEC_##__pre( 64, __func)   \
-    GEN_DEC_##__pre(128, __func)
+#define GEN_dec_ALL(__pre, __func) \
+    GEN_dec_##__pre( 64, __func)   \
+    GEN_dec_##__pre(128, __func)
 
-#define GEN_DEC_ALL_1(__pre) \
-    GEN_DEC_##__pre( 64)     \
-    GEN_DEC_##__pre(128)
+#define GEN_dec_ALL_1(__pre) \
+    GEN_dec_##__pre( 64)     \
+    GEN_dec_##__pre(128)
 
-GEN_DEC_ALL_1(caster)
-GEN_DEC_ALL_1(write_ref)
-GEN_DEC_ALL_1(release)
-GEN_DEC_ALL_1(aquire)
-GEN_DEC_ALL_1(__record)
-GEN_DEC_ALL_1(record)
-GEN_DEC_ALL_1(is)
-GEN_DEC_ALL_1(pl_unify)
-GEN_DEC_ALL_1(pl_get)
+GEN_dec_ALL_1(caster)
+GEN_dec_ALL_1(write_ref)
+GEN_dec_ALL_1(release)
+GEN_dec_ALL_1(aquire)
+GEN_dec_ALL_1(__record)
+GEN_dec_ALL_1(record)
+GEN_dec_ALL_1(is)
+GEN_dec_ALL_1(pl_unify)
+GEN_dec_ALL_1(pl_get)
 
 #include "pl-dec_auto.h"
