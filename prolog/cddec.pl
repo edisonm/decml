@@ -3,7 +3,7 @@
     Author:        Edison Mera
     E-mail:        efmera@gmail.com
     WWW:           https://github.com/edisonm/assertions
-    Copyright (C): 2020, Process Design Center, Breda, The Netherlands.
+    Copyright (C): 2025, Process Design Center, Breda, The Netherlands.
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
