@@ -9,10 +9,10 @@
 #define __IMPL_INTERN_DEC_OUT_STR(__type)                               \
     int intern_dec##__type##_out_str(IOSTREAM *stream,                  \
                                      const intern_dec##__type##_t *d) { \
-        char buf[__type/2];                                             \
-        if (intern_dec##__type##_get_str(d, buf, __type/2))             \
+        char s[__type/2];                                               \
+        if (intern_dec##__type##_get_str(d, s, __type/2))               \
             return FALSE;                                               \
-        if (Sfputs(buf, stream) == EOF)                                 \
+        if (Sfputs(s, stream) == EOF)                                   \
             return FALSE;                                               \
         return TRUE;                                                    \
     }
