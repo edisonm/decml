@@ -24,11 +24,6 @@
         return intern_##__dec##_out_str(stream, &i);                    \
     }
 
-__IMPL_INTERN_dec_OUT_STR(64)
-__IMPL_INTERN_dec_OUT_STR(128)
-__IMPL_dec_OUT_STR(dec64)
-__IMPL_dec_OUT_STR(dec128)
-
 #define GEN_dec_write_ref(__type)                               \
     static int write_dec##__type##_ref(IOSTREAM *stream,        \
                                        atom_t aref, int flags)  \
@@ -217,6 +212,11 @@ __IMPL_dec_OUT_STR(dec128)
 #define GEN_dec_ALL_1(__pre) \
     GEN_dec_##__pre( 64)     \
     GEN_dec_##__pre(128)
+
+__IMPL_INTERN_dec_OUT_STR(64)
+__IMPL_INTERN_dec_OUT_STR(128)
+__IMPL_dec_OUT_STR(dec64)
+__IMPL_dec_OUT_STR(dec128)
 
 GEN_dec_ALL_1(caster)
 GEN_dec_ALL_1(write_ref)
