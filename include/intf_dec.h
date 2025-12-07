@@ -60,6 +60,7 @@
     __pref##_DEC_FUNC_1(cbrt,    __dec);        \
     __pref##_DEC_FUNC_1(floor,   __dec);        \
     __pref##_DEC_FUNC_1(ceil,    __dec);        \
+    __pref##_DEC_FUNC_1(lgamma,  __dec);        \
     __pref##_DEC_FUNC_1(round,   __dec);
 
 #define __DEC_FUNC_2_ALL(__pref, __dec)         \

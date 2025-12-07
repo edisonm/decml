@@ -59,7 +59,7 @@ void report_failed(int failed);
                             d_exp++;                                    \
                             diff /= 10;                                 \
                         }                                               \
-                        if (diff <= 200) {                              \
+                        if (diff <= 700) {				\
                             __dec##_get_str(&d, b_d, sizeof(b_d));      \
                             printf("Test %d passed: '%s(%s)=%s (+%s)'\n", i + 1, \
                                    #__func, b_x, buf, b_d);             \

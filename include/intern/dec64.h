@@ -36,6 +36,8 @@ extern const char dec_sign[];
 
 #define __print_bits_dec64(x) printf("%lu", x)
 
+#define __print_bits_intern_dec64(x) __print_bits_dec64(x)
+
 #define __print_intern_dec64(x) printf("%c%lue%d%s", dec_sign[x.sign], x.coeff, x.exponent, dec_special[x.special])
 
 extern const intern_dec64_t intern_dec64_zero, intern_dec64_one,

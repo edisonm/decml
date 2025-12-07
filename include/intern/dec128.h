@@ -43,6 +43,8 @@ extern const char dec_sign[];
 
 #define __print_bits_dec128(x) print_uint128(x)
 
+#define __print_bits_intern_dec128(x) __print_bits_dec128(x)
+
 #define __print_intern_dec128(x) ({                                     \
             printf("%c", dec_sign[x.sign]);                             \
             print_uint128(x.coeff);                                     \

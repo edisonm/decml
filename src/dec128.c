@@ -14,8 +14,8 @@ const dec128_t dec128_epsilon = encode_dec128(0, 1, -dec128_MAX_DIGITS);
 
 __IMPL_DEC_SET_STR(dec128)
 __IMPL_DEC_GET_STR(dec128)
-__IMPL_DEC_FUNC2i(powi,   dec128)
-__IMPL_DEC_FUNCi2(cmp,    dec128)
+__IMPL_DEC_FUNC2i(powi, dec128)
+__IMPL_DEC_FUNCi2(cmp,  dec128)
 
 __DEC_FUNC_1_ALL(__IMPL, dec128)
 __DEC_FUNC_2_ALL(__IMPL, dec128)
