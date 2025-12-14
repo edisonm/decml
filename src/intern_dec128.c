@@ -11,7 +11,7 @@
 #include "intern/impl_dec_acos.h"
 #include "intern/impl_dec_log10.h"
 #include "intern/impl_dec_exp10m1.h"
-/* We implemented 2 lgamma methods to be able to compare, so far the best is larczos */
+/* We implemented 2 lgamma methods to be able to compare, so far the best is lanczos */
 /* #define USE_SPOUGE */
 #ifdef USE_SPOUGE
 # include "intern/impl_dec_lgamma_spouge.h"
@@ -44,9 +44,14 @@ __IMPL_CONST_INTERN_DEC(dec128, log10_e, 0,
 
 __IMPL_CONST_INTERN_DEC(dec128, epsilon, 0, (__uint128_t)1ULL, -I_dec128_MAX_DIGITS, DEC_NORMAL);
 
-/* n = 25, g = 18 */
 
 #ifndef USE_SPOUGE
+// echo "r=dump_lanczos_dec128_coef(18,25)"| BC_LINE_LENGTH=0 bc -l lanczos.bc
+// lanczos(18,25,G),maplist(dump_dec128,G),fail.
+
+static const int LANCZOS_dec128_N = 25;
+static const intern_dec128_t lanczos_dec128_g = {0, 18, 0, DEC_NORMAL};
+
 const intern_dec128_t lanczos_dec128_coef[] = {
     {0,  (__uint128_t)9999999999999999999ULL * 10000000000000000000ULL + 9999999999999950240ULL, -38, DEC_NORMAL},
     {0,  (__uint128_t)6646339528683197792ULL * 10000000000000000000ULL + 4099909081195860925ULL, -30, DEC_NORMAL},
@@ -59,7 +64,7 @@ const intern_dec128_t lanczos_dec128_coef[] = {
     {1, (__uint128_t)13106638839759456867ULL * 10000000000000000000ULL + 1022946165497922607ULL, -30, DEC_NORMAL},
     {0, ((__uint128_t)2702948464965313996ULL * 10000000000000000000ULL + 6825618317420853334ULL)*10+1, -31, DEC_NORMAL},
     {1,  (__uint128_t)3648630829312252970ULL * 10000000000000000000ULL +  960490625680316178ULL, -31, DEC_NORMAL},
-    {0, ((__uint128_t)3065483005597971028ULL * 10000000000000000000ULL + 1142410808025754970ULL)*10+2, -33, DEC_NORMAL},
+    {0, ((__uint128_t)3065483005597971028ULL * 10000000000000000000ULL)*10 + 11424108080257549702ULL, -33, DEC_NORMAL},
     {1, (__uint128_t)14831056232551733655ULL * 10000000000000000000ULL + 7602761533938222691ULL, -34, DEC_NORMAL},
     {0,  (__uint128_t)3662067717866306977ULL * 10000000000000000000ULL + 8951402453569534733ULL, -35, DEC_NORMAL},
     {1,  (__uint128_t)3795979461432854863ULL * 10000000000000000000ULL + 4254119707029618720ULL, -37, DEC_NORMAL},
@@ -74,9 +79,6 @@ const intern_dec128_t lanczos_dec128_coef[] = {
     {0,  (__uint128_t)9298129334428721936ULL * 10000000000000000000ULL + 5251191786236301098ULL, -56, DEC_NORMAL},
     {0, ((__uint128_t)2044999006729453561ULL * 10000000000000000000ULL + 8070042123871469051ULL)*10+2, -57, DEC_NORMAL},
 };
-
-static const int LANCZOS_dec128_N = 25;
-static const intern_dec128_t lanczos_dec128_g = {0, 18, 0, DEC_NORMAL};
 #endif
 
 void print_uint128(__uint128_t n) {

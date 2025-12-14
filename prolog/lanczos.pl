@@ -1,6 +1,8 @@
 :- module(lanczos,
           [ lanczos/3,
+            gammap1/4,
             gamma/4,
+            lgammap1/4,
             lgamma/4
           ]).
 
@@ -8,7 +10,7 @@
 :- use_module(library(cdfloatn)).
 
 /* Calculates the lanczos coefficients, just interpolating, since the integrals
- * where too complicated, it turns out that it is way easier we stablish a
+ * where too complicated, it turns out that it is way easier if we stablish a
  * systems of equations to interpolate the coefficients.
 
 Example, calculate the coefficients given as example in the Wikipedia:
@@ -97,21 +99,26 @@ b(G, Z, B) :-
 
 lb(G, Z, B) :-
     { T = (Z+G+1/2),
-      LSqrt2Pi = log(8*atan(1))/2,
+      LSqrt2Pi = log(2*pi)/2,
       B = LSqrt2Pi+log(T)*(Z+1/2)-T
     }.
 
-gamma(G, N, Z, S) :-
+gammap1(G, N, Z, S) :-
     lanczos(G, N, P),
     lanczos_agz(P, Z, A),
     b(G, Z, B),
     {S = B*A}.
 
-lgamma(G, N, Z, S) :-
+gamma(G, N, Z, S) :- gammap1(G, N, Z-1, S).
+    
+
+lgammap1(G, N, Z, S) :-
     lanczos(G, N, P),
     lanczos_agz(P, Z, A),
     lb(G, Z, B),
     {S = B+log(A)}.
+
+lgamma(G, N, Z, S) :- lgammap1(G, N, N-1, S).
 
 fact(0, 1) :- !.
 fact(N, F) :-
