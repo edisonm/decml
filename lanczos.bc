@@ -330,12 +330,13 @@ c64_2 = (2^64-1)/10^19
 
 p264m1 = 2^64-1
 
-define print_dec64(y) {
-  if (y < 0) {
+define print_dec64(a) {
+  if (a < 0) {
     s = 1
-    y = -y
+    y = -a
   } else {
     s = 0
+    y = a
   }
   if (y == 0) {
     k = 0
