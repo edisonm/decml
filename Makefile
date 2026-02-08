@@ -3,12 +3,16 @@ CC = gcc
 CFLAGS = -I./include -Wall -Wextra -O2 -fPIC
 LIBS = bin/libdec.a
 
-SRCS =  intern_dec.c gen_pow10m1_dec64_table.c dec64_dec128.c \
-	dec64.c  intern_dec64_str.c intern_dec64.c \
+AUTOGEN=gen_pow10m1_dec64_table.c \
+	gen_lanczos_dec64_table.c \
 	gen_pow10m1_dec128_table.c \
+	gen_lanczos_dec128_table.c
+
+SRCS =  $(AUTOGEN) intern_dec.c dec64_dec128.c \
+	dec64.c  intern_dec64_str.c intern_dec64.c \
 	dec128.c intern_dec128_str.c intern_dec128.c
 
-.PRECIOUS: bin/gen_pow10m1_dec128_table.c
+.PRECIOUS: $(addprefix bin/,$(AUTOGEN))
 
 OBJS = $(SRCS:.c=.o)
 
@@ -55,4 +59,4 @@ $(TESTS):
 .PHONY: tests clean all
 
 clean:
-	rm -f $(addprefix,bin/,$(TESTS)) bin/*.o bin/*.a bin/test*
+	rm -f $(addprefix,bin/,$(TESTS)) bin/*.o bin/*.c bin/*.a bin/test*

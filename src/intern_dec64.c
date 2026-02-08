@@ -39,44 +39,9 @@ n ~= -2 -0.3*log(epsilon), which gives for 20 digits, n~=12 terms
 
 
 #ifndef USE_SPOUGE
-/* 9-term, g=7; ~16 digits (classic set) */
-/*
-const intern_dec64_t lanczos_dec64_coef[] = {
-    {0,  9999999999998099323ULL, -19, DEC_NORMAL},
-    {0,  6765203681218850986ULL, -16, DEC_NORMAL},
-    {1, 12591392167224028705ULL, -16, DEC_NORMAL},
-    {0,  7713234287776530788ULL, -16, DEC_NORMAL},
-    {1, 17661502916214059907ULL, -17, DEC_NORMAL},
-    {0, 12507343278686904814ULL, -18, DEC_NORMAL},
-    {1, 13857109526572011690ULL, -20, DEC_NORMAL},
-    {0,  9984369578019571613ULL, -24, DEC_NORMAL},
-    {0, 15056327351493115583ULL, -26, DEC_NORMAL}
-};
-
-static const int LANCZOS_dec64_N = 9;
-static const intern_dec64_t lanczos_dec64_g = {0, 7, 0, DEC_NORMAL};
-*/
-
-/* g = 8, n = 12, ~20 digits */
-const intern_dec64_t lanczos_dec64_coef[] = {
-    {0,  9999999999999999298ULL, -19, DEC_NORMAL},
-    {0,  1975373902357885232ULL, -15, DEC_NORMAL},
-    {1,  4397382392792242892ULL, -15, DEC_NORMAL},
-    {0,  3462632845986271702ULL, -15, DEC_NORMAL},
-    {1, 11569851431631167820ULL, -16, DEC_NORMAL},
-    {0,  1545381505025277506ULL, -16, DEC_NORMAL},
-    {1,  6253671612368916180ULL, -18, DEC_NORMAL},
-    {0,  3464276245473680744ULL, -20, DEC_NORMAL},
-    {1,  7477617197444297738ULL, -25, DEC_NORMAL},
-    {0,  6304125382185226426ULL, -26, DEC_NORMAL},
-    {1,  2740571703568387749ULL, -26, DEC_NORMAL},
-    {0,  4048694881756760910ULL, -27, DEC_NORMAL}
-};
-
-static const int LANCZOS_dec64_N = 12;
-static const intern_dec64_t lanczos_dec64_g = {0, 8, 0, DEC_NORMAL};
-
-
+extern const int LANCZOS_dec64_N;
+extern const intern_dec64_t lanczos_dec64_g;
+extern const intern_dec64_t lanczos_dec64_coef[];
 #endif
 
 void print_uint64(uint64_t n) {
