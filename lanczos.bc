@@ -212,86 +212,6 @@ define round(x) {
   return r
 }
 
-define float128(x, &sign[], &exp[], &coef[]) {
-  if(x < 0) {
-    sign[0] = 1
-    y = -x
-  } else {
-    y = x
-    sign[0] = 0
-  }
-  int128max = 2^128-1
-  exp[0] = ceil((l(y)-l(int128max))/l(10))
-  coef[0] = round(y/pow(10, exp[0]))
-}
-
-define max(x, y) {
-  if (x>y) {
-    return x
-  } else {
-    return y
-  }
-}
-
-define coef128to64(y, &c[], &e[]) {
-  int64max = 2^64-1
-  e[0] = 10^ceil((l(y)-l(int64max))/l(10))
-  c[0] = floor(y/e[0])
-  r  = y - c[0] * e[0]
-  e[1] = 10^max(0,ceil((l(r)-l(int64max))/l(10)))
-  c[1] = floor(r/e[1])
-  c[2] = r - c[1] * e[1]
-}
-
-define print_dec128(x) {
-  auto sign[], exp[], coef[], c[], e[]
-  ret = float128(x, sign[], exp[], coef[])
-  ret = coef128to64(coef[0], c[], e[])
-  ps = scale
-  scale = 0
-  print "    {", sign[0], ","
-  if (c[0] < 10000000000000000000) {
-    print " "
-  }
-  if (e[0] < 2^64) {
-    print " (__uint128_t)", c[0], "ULL * ", e[0], "ULL"
-    if (c[1] != 0) {
-      print " + ", c[1], "ULL"
-    }
-    print ", ", exp[0], ", DEC_NORMAL},\n"
-  } else if (e[1] == 10) {
-    e01 = e[0] / e[1]
-    if (c[2] == 0) {
-      exp2 = exp[0] + 1
-      print " (__uint128_t)", c[0], "ULL * ", e01, "ULL"
-      if (c[1] != 0) {
-        print " + ", c[1], "ULL"
-      }
-      print ", ", exp2, ", DEC_NORMAL},\n"
-    } else {
-      print "((__uint128_t)", c[0], "ULL * ", e01, "ULL"
-      if (c[1] != 0) {
-        print " + ", c[1], "ULL"
-      }
-      print ")*", e[1], "+", c[2], ", ", exp[0], ", DEC_NORMAL},\n"
-    }
-  } else {
-    e01 = e[0] / 10
-    if (c[1] % 10 == 0) {
-      c10 = c[1] / 10
-      exp2 = exp[0] + 1
-      print " (__uint128_t)", c[0], "ULL * ", e01, "ULL + ", c10, "ULL, ", exp2, ", DEC_NORMAL},\n"
-    } else {
-      if (c[1] == 0) {
-        print "((__uint128_t)", c[0], "ULL * ", e01, "ULL)*10, ", exp[0], ", DEC_NORMAL},\n"
-      } else {
-        print "((__uint128_t)", c[0], "ULL * ", e01, "ULL)*10 + ", c[1], "ULL, ", exp[0], ", DEC_NORMAL},\n"
-      }
-    }
-  }
-  scale = ps
-}
-
 /* example: compute coefficients and test gamma */
 define demo() {
   auto g, n, p[], z
@@ -309,7 +229,7 @@ define demo() {
 define print_dec128_list(n, x[]) {
   auto i
   for (i = 0; i < n; i++) {
-    ret=print_dec128(x[i])
+    ret=print_dec128(x[i], 0)
   }
   return 0
 }
@@ -322,15 +242,12 @@ define dump_lanczos_dec128_coef(g, n) {
   r=lanczos_coeffs(g,n,p[])
   r=print_dec128_list(n,p[])
   print "};\n"
-
 }
-
-c64_1 = (2^64-1)/10^18
-c64_2 = (2^64-1)/10^19
 
 p264m1 = 2^64-1
 
-define print_dec64(a) {
+define print_dec64(a, exp) {
+  auto x, y, s, k
   if (a < 0) {
     s = 1
     y = -a
@@ -342,27 +259,21 @@ define print_dec64(a) {
     k = 0
     x = 0
   } else {
-    pscale=scale
-    x = l(y)/l(10)-19
-    scale=0
-    x /= 1
-    scale=pscale
+    x = floor(l(y)/l(10)-19)
     y = y/10^x
     if (y > p264m1) {
-      x++
+      x = x+1
       y /= 10
     }
-    scale=0
-    k=(y+0.5)/1
-    scale=pscale
+    k=round(y)
   }
-  print "        {", s, ", ", k, "ULL, ", x, ", DEC_NORMAL},\n"
+  print "        {", s, ", ", k, "ULL, ", x+exp, ", DEC_NORMAL}, /*", k, "e", x+exp, "*/\n"
 }
 
 define print_dec64_list(n, x[]) {
   auto i
   for (i = 0; i < n; i++) {
-    ret=print_dec64(x[i])
+    ret=print_dec64(x[i], 0)
   }
   return 0
 }
@@ -378,51 +289,48 @@ define dump_lanczos_dec64_coef(g, n) {
 
 }
 
-define print_dec64_2(s, x, y) {
-  if (y > c64_1) {
-    exp = 16
-  } else if (y > c64_2) {
-    exp = 17
-  } else
-    exp = 18
-  z = 10^exp*y
-  scale=0
-  k=(z+0.5)/1
-  print "        {", s, ", ", k, "ULL, ", x-exp, ", DEC_NORMAL},\n"
-}
-
 define dump_pow10m1_dec64_table(n) {
   auto x, i, y
   for (x = 1; x <= n; x++) {
     print "    {\n"
     for (i = 1; i <= 9; i++) {
-      scale=30+x
+      scale=20+x
       y = 10^x*(e(i*l(10)/10^x)-1)
-      r=print_dec64_2(0, -x, y)
+      scale=20
+      y = y/1
+      r=print_dec64(y, -x)
     }
     print "    },\n"
   }
 }
 
-c128_1 = (2^128-1)/10^37
-c128_2 = (2^128-1)/10^38
+p2128m1 = 2^128-1
 
-define print_dec128_2(s, x, y) {
-  if (y > c128_1) {
-    exp = 36
-  } else if (y > c128_2) {
-    exp = 37
-  } else
-    exp = 38
-  z = 10^exp*y
-  scale=0
-  obase=16
-  print "        {", s, ", "
-  k=(z+0.5)/1
-  print "((__uint128_t)0x", k/2^64, "ULL<<64)+ ", "0x", k%2^64, "ULL, "
-  obase=10
-  print x-exp
-  print ", DEC_NORMAL},\n"
+define print_dec128(a, exp) {
+  auto x, y, s, k, k1, k2
+  if (a < 0) {
+    s = 1
+    y = -a
+  } else {
+    s = 0
+    y = a
+  }
+  if (y == 0) {
+    k = 0
+    x = 0
+  } else {
+    x = floor(l(y)/l(10)-38)
+    y = y/10^x
+    if (y > p2128m1) {
+      x = x+1
+      y /= 10
+    }
+    k=round(y)
+  }
+  k1 = floor(k/2^64)
+  k2 = k - k1*2^64
+  print "        {", s, ", ((__uint128_t)", k1, "ULL<<64)+ ", k2, "ULL, "
+  print x+exp, ", DEC_NORMAL}, /*", k, "e", x+exp, " */\n"
 }
 
 define dump_pow10m1_dec128_table(n) {
@@ -432,7 +340,9 @@ define dump_pow10m1_dec128_table(n) {
     for (i = 1; i <= 9; i++) {
       scale=50+x
       y = 10^x*(e(i*l(10)/10^x)-1)
-      r=print_dec128_2(0, -x, y)
+      scale=50
+      y = y/1
+      r=print_dec128(y, -x)
     }
     print "    },\n"
   }
