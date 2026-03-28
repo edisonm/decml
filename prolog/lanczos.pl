@@ -118,7 +118,7 @@ lgammap1(G, N, Z, S) :-
     lb(G, Z, B),
     {S = B+log(A)}.
 
-lgamma(G, N, Z, S) :- lgammap1(G, N, N-1, S).
+lgamma(G, N, _Z, S) :- lgammap1(G, N, N-1, S).
 
 fact(0, 1) :- !.
 fact(N, F) :-
