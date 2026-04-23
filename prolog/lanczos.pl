@@ -31,9 +31,6 @@ true.
 false.
 
 % increase the precision to get the values right
-?- set_clpcd(cdfloatn(256)).
-Correct to: "clpcd_domain_ops:set_clpcd(cdfloatn(256))"? y
-true.
 
 ?- lanczos(8,12,G),maplist(writeln,G),fail.
 0.9999999999999999298072683210053961619688770239641926303795788539010937350319957
@@ -51,9 +48,6 @@ true.
 false.
 
 % Not in Wikipedia, but used in dec128:
-?- set_clpcd(cdfloatn(512)).
-Correct to: "clpcd_domain_ops:set_clpcd(cdfloatn(512))"? y
-true.
 
 ?- lanczos(18,25,G),maplist(writeln,G),fail.
 0.99999999999999999999999999999999950239649801894207360442888428664168804982529130467888866394773257188017994432347692886712024987217975268236252456924474982

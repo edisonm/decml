@@ -45,4 +45,3 @@
 
 clpcd_domain_ops:clpcd_module(cdqd, cdqd).
 
-:- initialization(set_clpcd(cdqd)).
